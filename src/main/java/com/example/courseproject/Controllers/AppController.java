@@ -32,6 +32,11 @@ public class AppController {
         return "login";
     }
 
+    @GetMapping("/admin_panel")
+    public String adminPage(Model model, String error, String logout){
+        return "admin_panel";
+    }
+
     @GetMapping("")
     public String viewHomePage(Authentication authentication){
         if(authentication != null && authentication.isAuthenticated()){

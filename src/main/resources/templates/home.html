@@ -21,6 +21,7 @@
         <ul class="navbar-nav">
             <li class="nav-item"><a class="nav-link" th:href="@{/list_users}">User list</a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/user_profil}" rel="nofollow"><b>[[${#request.userPrincipal.principal.fullName}]]</b></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/admin_panel}" rel="nofollow">Admin-Panel</a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/logout}" rel="nofollow">Logout</a></li>
         </ul>
     </div>
