@@ -170,6 +170,69 @@ public class UserController {
         }
     }
 
+    @PostMapping("/update_user")
+    public void updateUser(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            if(!(userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
+                authentication.setAuthenticated(false);
+                response.getWriter().write("login");
+                return;
+            }
+            String user_name = request.getParameter("user_name");
+            String surname = request.getParameter("surname");
+            String phone_number = request.getParameter("phone_number");
+            String address = request.getParameter("address");
+            String email = request.getParameter("email");
+            User user = userRepository.findByEmail(customUserDetails.getUsername());
+            user.setFirstName(user_name);
+            user.setLastName(surname);
+            user.setPhoneNumber(phone_number);
+            user.setAddress(address);
+            user.setEmail(email);
+            Date date = new Date();
+            user.setUpdateDate(formatter.format(date));
+            userRepository.save(user);
+            response.getWriter().write("success");
+            return;
+        } else {
+            response.getWriter().write("login");
+        }
+    }
+
+    @PostMapping("/update_pass")
+    public void updateUserPass(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            if(!(userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
+                authentication.setAuthenticated(false);
+                response.getWriter().write("login");
+                return;
+            }
+            String old_pass = request.getParameter("old_pass");
+            String pass1 = request.getParameter("pass1") != null ? request.getParameter("pass1") : "";
+            String pass2 = request.getParameter("pass2") != null ? request.getParameter("pass2") : "";
+            User user = userRepository.findByEmail(customUserDetails.getUsername());
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if(encoder.matches(old_pass,user.getPassword()) && pass1.equals(pass2) && pass1.length()>0){
+                user.setPassword(encoder.encode(pass1));
+                Date date = new Date();
+                user.setUpdateDate(formatter.format(date));
+                userRepository.save(user);
+                response.getWriter().write("success");
+            } else {
+                response.getWriter().write("error");
+            }
+            return;
+        } else {
+            response.getWriter().write("login");
+        }
+    }
+
     @PostMapping("/process_register")
     public String processRegistration(User user, Model model){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

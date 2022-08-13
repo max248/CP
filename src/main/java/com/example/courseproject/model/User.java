@@ -34,6 +34,15 @@ public class User {
     @Column(nullable = false, length = 32)
     private String lastLoginDate;
 
+    @Column(nullable = true, length = 32)
+    private String updateDate;
+
+    @Column(nullable = true, length = 32)
+    private String phoneNumber;
+
+    @Column(nullable = true, length = 32)
+    private String address;
+
     @Column
     private boolean enabled;
 
@@ -111,6 +120,30 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(String updateDate) {
+        this.updateDate = updateDate;
     }
 
     @Override
