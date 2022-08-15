@@ -1,8 +1,8 @@
 package com.example.courseproject.Controllers;
 
 import com.example.courseproject.CustomUserDetails;
-import com.example.courseproject.RoleRepository;
-import com.example.courseproject.UserRepository;
+import com.example.courseproject.Repositories.RoleRepository;
+import com.example.courseproject.Repositories.UserRepository;
 import com.example.courseproject.model.Role;
 import com.example.courseproject.model.User;
 import com.google.gson.Gson;

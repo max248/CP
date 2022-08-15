@@ -1,13 +1,15 @@
 package com.example.courseproject.Controllers;
 
 import com.example.courseproject.CustomUserDetails;
-import com.example.courseproject.RoleRepository;
-import com.example.courseproject.UserRepository;
+import com.example.courseproject.Repositories.RoleRepository;
+import com.example.courseproject.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,7 +35,9 @@ public class AppController {
     }
 
     @GetMapping("/admin_panel")
-    public String adminPage(Model model, String error, String logout){
+    public String adminPage(Authentication authentication, HttpServletRequest request){
+        CustomUserDetails customUserDetails = authentication != null ? (CustomUserDetails) authentication.getPrincipal() : null;
+        request.setAttribute("username",customUserDetails.getFullName());
         return "admin_panel";
     }
 

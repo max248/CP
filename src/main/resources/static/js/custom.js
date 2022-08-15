@@ -17,4 +17,4 @@ $(document).ready(function () {
   $('[data-toggle="tooltip"]').tooltip();
 });
 
-var ps = new PerfectScrollbar('#sidebar');
+// var ps = new PerfectScrollbar('#sidebar');

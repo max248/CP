@@ -1,4 +1,4 @@
-package com.example.courseproject;
+package com.example.courseproject.Repositories;
 
 
 import com.example.courseproject.model.Role;

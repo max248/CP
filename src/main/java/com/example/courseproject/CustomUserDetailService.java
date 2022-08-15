@@ -1,4 +1,5 @@
 package com.example.courseproject;
+import com.example.courseproject.Repositories.UserRepository;
 import com.example.courseproject.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

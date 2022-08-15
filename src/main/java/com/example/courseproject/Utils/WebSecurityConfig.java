@@ -1,6 +1,7 @@
-package com.example.courseproject;
+package com.example.courseproject.Utils;
 
 
+import com.example.courseproject.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

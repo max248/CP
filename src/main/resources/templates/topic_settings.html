@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+  <!-- basic -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- mobile metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <!-- site metas -->
+  <title>Admin - Dashboard</title>
+  <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgpEB0pwwB8BKgqs5msjHFdboMiy8LCFKKlQ&usqp=CAU">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- site icon -->
+  <link rel="icon" th:href="@{img/itransition.jpg}" type="image/png"/>
+  <!-- bootstrap css -->
+  <link rel="stylesheet" th:href="@{css/bootstrap.min.css}"/>
+  <!-- site css -->
+  <link rel="stylesheet" th:href="@{css/style.css}"/>
+  <!-- responsive css -->
+  <link rel="stylesheet" th:href="@{css/responsive.css}"/>
+  <!-- color css -->
+  <!--    <link rel="stylesheet" th:href="@{css/colors.css}" />-->
+  <!-- select bootstrap -->
+  <link rel="stylesheet" th:href="@{css/bootstrap-select.css}"/>
+  <!-- scrollbar css -->
+  <link rel="stylesheet" th:href="@{css/perfect-scrollbar.css}"/>
+  <!-- custom css -->
+  <link rel="stylesheet" th:href="@{css/custom.css}"/>
+  <link th:href="@{/css/toast.css}" rel="stylesheet">
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script th:src="@{js/popper.min.js}"></script>
+  <script th:src="@{js/bootstrap.min.js}"></script>
+  <!-- wow animation -->
+  <script th:src="@{js/animate.js}"></script>
+  <!-- select country -->
+  <script th:src="@{js/bootstrap-select.js}"></script>
+  <!-- owl carousel -->
+  <script th:src="@{js/owl.carousel.js}"></script>
+  <!-- nice scrollbar -->
+<!--  <script th:src="@{js/perfect-scrollbar.min.js}"></script>-->
+<!--  <script>-->
+<!--    var ps = new PerfectScrollbar('#sidebar');-->
+<!--  </script>-->
+  <!-- custom js -->
+  <script th:src="@{js/custom.js}"></script>
+  <script type="text/javascript" th:src="@{/js/toast.min.js}"></script>
+  <!-- <script src="js/chart_custom_style1.js"></script> -->
+  <![endif]-->
+</head>
+<body class="dashboard dashboard_1">
+<div class="full_container">
+  <div class="inner_container">
+    <!-- Sidebar  -->
+    <nav id="sidebar">
+      <div class="sidebar_blog_1">
+        <div class="sidebar-header">
+          <div class="logo_section">
+            <a href="#"><img class="logo_icon img-responsive" src="/img/itransition.jpg" alt="/admin_panel"/></a>
+          </div>
+        </div>
+        <div class="sidebar_user_info">
+          <div class="icon_setting"></div>
+          <div class="user_profle_side">
+            <div class="user_img"><img class="img-responsive" src="/img/user_img.jpg" alt="#"/></div>
+            <div class="user_info">
+              <h6>John David</h6>
+              <p><span class="online_animation"></span> Online</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar_blog_2">
+        <h4>General</h4>
+        <ul class="list-unstyled components">
+          <li><a th:href="@{/list_users}"><i class="fa fa-users" aria-hidden="true"></i> <span>Users</span></a></li>
+          <li><a th:href="@{/topic_settings}"><i class="fa fa-list"></i> <span>Topics</span></a></li>
+          <li><a href="#"><i class="fa fa-outdent"></i> <span>Collections</span></a></li>
+          <li><a href="#"><i class="fa fa-align-left" aria-hidden="true"></i> <span>Items</span></a></li>
+          <li><a href="#"><i class="fa fa-slack" aria-hidden="true"></i> <span>Tags</span></a></li>
+        </ul>
+      </div>
+    </nav>
+    <!-- end sidebar -->
+    <!-- right content -->
+    <div id="content">
+      <!-- topbar -->
+      <div class="topbar">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <div class="full">
+            <button type="button" id="sidebarCollapse" class="sidebar_toggle"><i class="fa fa-bars"></i>
+            </button>
+            <div class="right_topbar">
+              <div class="icon_info">
+                <ul class="user_profile_dd">
+                  <li>
+                    <a class="dropdown-toggle" data-toggle="dropdown"><img
+                            class="img-responsive rounded-circle" src="/img/user_img.jpg"
+                            alt="#"/><span class="name_user">John David</span></a>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="/user_profil">My Profile</a>
+                      <a class="dropdown-item" href="/logout"><span>Log Out</span> <i
+                              class="fa fa-sign-out"></i></a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <!-- end topbar -->
+      <!-- dashboard inner -->
+      <div class="midde_cont">
+        <div class="container-fluid">
+          <div class="row column_title">
+            <div class="col-md-12">
+              <div class="page_title">
+                <h2>Topics</h2>Settings
+              </div>
+               <div class="text-right">
+                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus" aria-hidden="true"></i> Add a new Topic</button>
+               </div>
+            </div>
+          </div>
+          <div class="row column1">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="w-100 px-2">
+                  <br><br>
+                  <h1 class="mb-0 h4 text-center">List of All Topics</b></h1>
+                  <div class="container">
+                    <!--Grid row-->
+                    <div class="row">
+                      <!--Grid column-->
+                      <div class="col-md-12 mb-12">
+                        <!--Section: Post data-mdb-->
+                        <section class="border-bottom mb-8 text-center">
+                          <div class="tableFixHead">
+                            <table class="table table-fixed" id="myTable">
+                              <thead>
+                              <tr>
+                                <th style="width: 2%";><input type="checkbox" name="select-all" id="select-all" /></th>
+                                <th style="width: 10%;">ID</th>
+                                <th style="width: 30%;">Name</th>
+                                <th style="width: 30%;">Author</th>
+                                <th style="width: 10%;">Status</th>
+                                <th style="width: 10%;">Action</th>
+                              </tr>
+                              </thead>
+                              <tbody id="bodyTable">
+                              <tr th:each="topic : ${listTopics}">
+                                <td><input type="checkbox" name="checkedIds" th:value="${topic.id}"></td>
+                                <td th:text="${topic.id}"></td>
+                                <td style="text-align: left" th:text="${topic.name}"></td>
+                                <td style="text-align: left" th:text="${topic.user.fullName}"></td>
+                                <td th:text="${topic.status}"></td>
+                                <td></td>
+                              </tr>
+                              </tbody>
+
+                            </table>
+                          </div>
+                          <button class="btn btn-primary" id="block" onclick="setBlockTopicStatus(false)">Block</button>
+                          <button class="btn btn-secondary" id="unblock" onclick="setBlockTopicStatus(true)">Unblock</button>
+                          <button class="btn btn-danger" id="delete" onclick="deleteTopic()">Delete</button>
+                        </section>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- footer -->
+          <div class="container-fluid">
+            <div class="footer">
+              <p>Copyright © 2018 Designed by html.design. All rights reserved.<br><br>
+                Distributed By: <a href="#">ThemeWagon</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- end dashboard inner -->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="exampleModal" name="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add a new Topic</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <input class="form-control" type="text" id="topic_name" placeholder="Enter a Topic name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" onclick="addTopic()" class="btn btn-primary" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+<script>
+  $('#select-all').click(function(event) {
+    if(this.checked) {
+      $(':checkbox').each(function() {
+        if(!this.disabled){
+          this.checked = true;
+        }
+      });
+    } else {
+      $(':checkbox').each(function() {
+        if(!this.disabled){
+          this.checked = false;
+        }
+      });
+    }
+  });
+
+  function addTopic(){
+    var myModal = new bootstrap.Modal(document.getElementById("exampleModal"), {});
+    myModal.hide();
+    var topicName = $("#topic_name").val();
+    var data = 'topic_name=' + topicName;
+    $.ajax({
+      url: "/add_topic",
+      type: "POST",
+      data: data,
+      success: function (response){
+        $("#myTable > tbody").html("");
+        $('#select-all').prop('checked', false);
+        for(var i=0;i<response.length;i++){
+          $('#myTable tbody').append('<tr>' +
+                  '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
+                  '<td>' + response[i].id +  '</td>' +
+                  '<td>' + response[i].name +  '</td>' +
+                  '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
+                  '<td>' + response[i].status + '</td>' +
+                  '<td></td>' +
+                  '</tr>');
+        }
+
+        new Toast({
+          title: 'Message',
+          text: 'Topic is saved !!!',
+          theme: 'light',
+          autohide: true,
+          interval: 10000
+        });
+
+      },
+      error: function (error){
+        console.log("error: " + JSON.stringify(error));
+      }
+    })
+
+  }
+  function deleteTopic(){
+    var checkedValues = [];
+    $.each($("input[name='checkedIds']:checked"), function(){
+      checkedValues.push($(this).val());
+    });
+
+    var data = 'id=' + checkedValues;
+    $.ajax({
+      url:"/delete_topic",
+      type: "POST",
+      data: data,
+      success: function (response){
+        if(response == 'login'){
+          window.location.href = "/login";
+        } else {
+          $("#myTable > tbody").html("");
+          $('#select-all').prop('checked', false);
+          for(var i=0;i<response.length;i++){
+            $('#myTable tbody').append('<tr>' +
+                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
+                    '<td>' + response[i].id +  '</td>' +
+                    '<td>' + response[i].name +  '</td>' +
+                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
+                    '<td>' + response[i].status + '</td>' +
+                    '<td></td>' +
+                    '</tr>');
+          }
+
+          new Toast({
+            title: 'Message',
+            text: 'Topic is deleted !!!',
+            theme: 'light',
+            autohide: true,
+            interval: 10000
+          });
+        }
+      },
+      error: function (error){
+        console.log("error: " + JSON.stringify(error));
+      }
+    })
+  }
+  function setBlockTopicStatus(status){
+    var checkedValues = [];
+    $.each($("input[name='checkedIds']:checked"), function(){
+      checkedValues.push($(this).val());
+    });
+
+    var data = 'id=' + checkedValues + "&flag=" + status;
+    $.ajax({
+      url:"/status_topic",
+      type: "POST",
+      data: data,
+      success: function (response){
+        if(response == 'login'){
+          window.location.href = "/login";
+        } else {
+          $("#myTable > tbody").html("");
+          $('#select-all').prop('checked', false);
+          for(var i=0;i<response.length;i++){
+            $('#myTable tbody').append('<tr>' +
+                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
+                    '<td>' + response[i].id +  '</td>' +
+                    '<td>' + response[i].name +  '</td>' +
+                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
+                    '<td>' + response[i].status + '</td>' +
+                    '<td></td>' +
+                    '</tr>');
+          }
+
+          new Toast({
+            title: 'Message',
+            text: 'Topic is deleted !!!',
+            theme: 'light',
+            autohide: true,
+            interval: 10000
+          });
+        }
+      },
+      error: function (error){
+        console.log("error: " + JSON.stringify(error));
+      }
+    })
+  }
+</script>
+<style>
+  .tableFixHead {
+    overflow: auto;
+    height: 60vh;
+  }
+
+  .tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  /* Just common table stuff. Really. */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: 8px 16px;
+  }
+
+  th {
+    background: #eee;
+  }
+
+</style>

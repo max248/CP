@@ -1,0 +1,19 @@
+package com.example.courseproject.Repositories;
+
+import com.example.courseproject.model.Topics;
+import com.example.courseproject.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+public interface TopicRepository extends JpaRepository<Topics, Long> {
+    @Query("SELECT t FROM Topics t where t.name = ?1")
+    User findByName(String name);
+
+    @Modifying
+    @Query("update Topics t set t.status = ?2 where t.id = ?1")
+    @Transactional
+    void updateStatusById(Long id, boolean flag);
+
+}
