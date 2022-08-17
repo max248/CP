@@ -41,7 +41,6 @@ public class TopicController {
         request.setAttribute("username",customUserDetails.getFullName());
         List<Topics> topicsList = topicRepository.findAll();
         model.addAttribute("listTopics",topicsList);
-        model.addAttribute("test","TestTxt");
         return "topic_settings";
     }
 

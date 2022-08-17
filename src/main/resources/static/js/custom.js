@@ -14,7 +14,7 @@ $(document).ready(function () {
     $('#sidebar').toggleClass('active');
   });
   /*-- tooltip js --*/
-  $('[data-toggle="tooltip"]').tooltip();
+  // $('[data-toggle="tooltip"]').tooltip();
 });
 
 // var ps = new PerfectScrollbar('#sidebar');

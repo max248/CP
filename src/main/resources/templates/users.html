@@ -65,7 +65,7 @@
                     <div class="user_profle_side">
                         <div class="user_img"><img class="img-responsive" src="/img/user_img.jpg" alt="#"/></div>
                         <div class="user_info">
-                            <h6>John David</h6>
+                            <h6><label th:text="${username}"/></h6>
                             <p><span class="online_animation"></span> Online</p>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
                 <ul class="list-unstyled components">
                     <li><a th:href="@{/list_users}"><i class="fa fa-users" aria-hidden="true"></i> <span>Users</span></a></li>
                     <li><a th:href="@{/topic_settings}"><i class="fa fa-list"></i> <span>Topics</span></a></li>
-                    <li><a href="#"><i class="fa fa-outdent"></i> <span>Collections</span></a></li>
+                    <li><a th:href="@{/collection_settings}"><i class="fa fa-outdent"></i> <span>Collections</span></a></li>
                     <li><a href="#"><i class="fa fa-align-left" aria-hidden="true"></i> <span>Items</span></a></li>
                     <li><a href="#"><i class="fa fa-slack" aria-hidden="true"></i> <span>Tags</span></a></li>
                 </ul>
@@ -97,7 +97,7 @@
                                     <li>
                                         <a class="dropdown-toggle" data-toggle="dropdown"><img
                                                 class="img-responsive rounded-circle" src="/img/user_img.jpg"
-                                                alt="#"/><span class="name_user">John David</span></a>
+                                                alt="#"/><span class="name_user" th:text="${username}"></span></a>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="/user_profil">My Profile</a>
                                             <a class="dropdown-item" href="/logout"><span>Log Out</span> <i
