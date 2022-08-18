@@ -10,6 +10,8 @@ public class Items {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 45)
+    private String name;
     @ManyToOne
     @JoinColumn(name = "collection_id",nullable = false)
     private Collections collection;
@@ -73,5 +75,13 @@ public class Items {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

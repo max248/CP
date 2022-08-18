@@ -105,11 +105,11 @@
           <div class="row column_title">
             <div class="col-md-12">
               <div class="page_title">
-                <h2>Collections</h2>Settings
+                <h2>Items</h2>Settings
               </div>
               <div class="text-right">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="clearDiv()">
-                  <i class="fa fa-plus" aria-hidden="true"></i> Add a new Collection</button>
+                  <i class="fa fa-plus" aria-hidden="true"></i> Add a new Item</button>
               </div>
             </div>
           </div>
@@ -118,7 +118,7 @@
               <div class="row">
                 <div class="w-100 px-2">
                   <br><br>
-                  <h1 class="mb-0 h4 text-center">List of All Collections</b></h1>
+                  <h1 class="mb-0 h4 text-center">List of All Items</b></h1>
                   <div class="container">
                     <!--Grid row-->
                     <div class="row">
@@ -133,20 +133,20 @@
                                 <th style="width: 2%";><input type="checkbox" name="select-all" id="select-all" /></th>
                                 <th style="width: 10%;">ID</th>
                                 <th style="width: 30%;">Name</th>
-                                <th style="width: 15%;">Topic</th>
+                                <th style="width: 15%;">Collection</th>
                                 <th style="width: 15%;">Author</th>
                                 <th style="width: 15%;">Status</th>
                                 <th style="width: 10%;">Action</th>
                               </tr>
                               </thead>
                               <tbody id="bodyTable">
-                              <tr th:each="collection : ${listCollections}">
-                                <td><input type="checkbox" name="checkedIds" th:value="${collection.id}"></td>
-                                <td th:text="${collection.id}"></td>
-                                <td style="text-align: left" th:text="${collection.name}"></td>
-                                <td style="text-align: left" th:text="${collection.topics.name}"></td>
-                                <td style="text-align: left" th:text="${collection.user.fullName}"></td>
-                                <td th:text="${collection.status}"></td>
+                              <tr th:each="item : ${listItems}">
+                                <td><input type="checkbox" name="checkedIds" th:value="${item.id}"></td>
+                                <td th:text="${item.id}"></td>
+                                <td style="text-align: left" th:text="${item.name}"></td>
+                                <td style="text-align: left" th:text="${item.collection.name}"></td>
+                                <td style="text-align: left" th:text="${item.user.fullName}"></td>
+                                <td th:text="${item.status}"></td>
                                 <td>
                                   <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                   <i class="fa fa-lock" aria-hidden="true"></i>
@@ -193,23 +193,24 @@
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label" for="topicId">Receiver</label>
-          <select class="form-control selectpicker" id="topicId" name="topicId" data-live-search="true" required>
-            <option th:each="topic : ${listTopics}" th:value="${topic.id}" th:text="${topic.name}"> </option>
+          <label class="form-label" for="collectionId">Collections</label>
+          <select class="form-control selectpicker" id="collectionId" name="collectionId" data-live-search="true" onchange="getCollectionColumns(this)" required>
+            <option value="-1" text="Select collection"> </option>
+            <option th:each="collection : ${listCollections}" th:value="${collection.id}" th:text="${collection.name}"> </option>
           </select>
         </div>
         <div class="form-group col-md-12">
-          <input class="form-control" type="text" id="topic_name" placeholder="Enter a Collection name">
+          <input class="form-control" type="text" id="item_name" placeholder="Enter a Item name">
         </div>
         <div>
-          <button class="btn btn-primary add_field_button">Add Columns</button>
+          <span>Columns fields</span>
           <div class="input_fields_wrap" id="input_fields_wrap">
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" onclick="addCollection()" class="btn btn-primary" data-dismiss="modal">Save</button>
+        <button type="button" onclick="addItem()" class="btn btn-primary" data-dismiss="modal">Save</button>
       </div>
     </div>
   </div>
@@ -217,49 +218,6 @@
 </body>
 </html>
 <script>
-  $(document).ready(function() {
-    var max_fields      = 10; //maximum input boxes allowed
-    var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
-    var add_button      = $(".add_field_button"); //Add button ID
-
-    var x = 1; //initlal text box count
-    $(add_button).click(function(e){ //on add input button click
-      e.preventDefault();
-      if(x < max_fields){ //max input box allowed
-        $(wrapper).append('' +
-                '<div class="input-group-append" id="myDiv">' +
-                '<div class="row">' +
-                '<div class="col-1">' +
-                '<label class="form-label" for="topicId">Type</label>' +
-                '</div>' +
-                '<div class="col-4">' +
-                '<select class="form-control" name="typeId" id="typeID">\n' +
-                '      <option value="1">Text</option>\n' +
-                '      <option value="2">Date</option>\n' +
-                '      <option value="3">Text Area</option>\n' +
-                '      <option value="4">Number</option>\n' +
-                '      <option value="5">Boolean</option>\n' +
-                '</select>' +
-                '</div>' +
-                '<div class="col-1">' +
-                '<label class="form-label" for="topicId">Name</label>' +
-                '</div>' +
-                '<div class="col-4">' +
-                '<input placeholder="Column Name" type="text" name="columnName" id="columnName" class="form-control">' +
-                '</div>' +
-                '<div class="col-2">' +
-                '<button class="btn btn-outline-danger remove_field" type="button">Remove</button>' +
-                '</div>' +
-                '</div>' +
-                '</div>');
-      }
-      x++; //text box increment
-    });
-
-    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-      e.preventDefault(); $(this).parent('div').parent('div').remove(); x--;
-    })
-  });
   $('#select-all').click(function(event) {
     if(this.checked) {
       $(':checkbox').each(function() {
@@ -275,31 +233,54 @@
       });
     }
   });
- function clearDiv(){
-   $("#input_fields_wrap").empty();
- }
-  function addCollection(){
+  function clearDiv(){
+    $("#input_fields_wrap").empty();
+  }
+
+  function getCollectionColumns(id){
+    var collectionId = $("#collectionId").val();
+    console.log("id: " + id);
+    console.log("topicId: " + collectionId);
+    var data = 'collection_id=' + collectionId;
+    $.ajax({
+      url: "/get_collection_columns",
+      type: "POST",
+      data: data,
+      success: function (response){
+        var wrapper = $(".input_fields_wrap");
+        clearDiv();
+        for(var i=0;i<response.length;i++){
+          $(wrapper).append('' +
+                  '<div class="col-4">' +
+                  '<label class="form-label" for="columnName" name="collectionColumnName" id="collectionColumnName">' + response[i].name + '</label>' +
+                  '<input type="' + response[i].columnType.type + '" name="collectionColumn" id="collectionColumn" class="form-control collectionColumn">' +
+                  '</div>');
+
+        }
+      },
+      error: function (error){
+        console.log("error:" + error);
+      }
+    })
+  }
+  function addItem(){
     var myModal = new bootstrap.Modal(document.getElementById("exampleModal"), {});
     myModal.hide();
-    var topicId = $("#topicId").val();
-    var topicName = $("#topic_name").val();
-    var typeId = document.getElementsByName("typeId");
-    var columnName = document.getElementsByName("columnName");
-    var typeIds = [];
-    var columnNames = [];
+    var collectionId = $("#collectionId").val();
+    var itemName = $("#item_name").val();
     var i=0;
-    [].forEach.call(typeId, function(ele) {
-      typeIds[i] = ele.value;
-      i++;
-    });
-    i=0;
-    [].forEach.call(columnName, function(ele) {
-      columnNames[i] = ele.value;
-      i++;
-    });
-    var data = 'collection_name=' + topicName + '&topicId='+ topicId + '&typeIds=' + typeIds + '&columnNames=' + columnNames;
+    var array = $("input[name='collectionColumn']").map(function() {
+      return {
+        label: $(this).prevAll('label:first').text(),
+        val: $(this).val()
+      };
+    }).get();
+    console.log("array: "+ JSON.stringify(array));
+
+    var data = 'itemName=' + itemName + '&collectionId='+ collectionId +
+            '&collectionColumnValues=' + JSON.stringify(array);
     $.ajax({
-      url: "/add_collection",
+      url: "/add_item",
       type: "POST",
       data: data,
       success: function (response){
@@ -312,27 +293,6 @@
             interval: 10000
           });
         } else {
-          $("#myTable > tbody").html("");
-          $('#select-all').prop('checked', false);
-          for(var i=0;i<response.length;i++){
-            $('#myTable tbody').append('<tr>' +
-                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                    '<td>' + response[i].id +  '</td>' +
-                    '<td>' + response[i].name +  '</td>' +
-                    '<td>' + response[i].topics.name +  '</td>' +
-                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                    '<td>' + response[i].status + '</td>' +
-                    '<td></td>' +
-                    '</tr>');
-          }
-          new Toast({
-            title: 'Message',
-            text: 'Collection is saved !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
-          $("#input_fields_wrap").empty();
         }
 
       },
@@ -341,92 +301,6 @@
       }
     })
 
-  }
-  function deleteCollection(){
-    var checkedValues = [];
-    $.each($("input[name='checkedIds']:checked"), function(){
-      checkedValues.push($(this).val());
-    });
-
-    var data = 'id=' + checkedValues;
-    $.ajax({
-      url:"/delete_collection",
-      type: "POST",
-      data: data,
-      success: function (response){
-        if(response == 'login'){
-          window.location.href = "/login";
-        } else {
-          $("#myTable > tbody").html("");
-          $('#select-all').prop('checked', false);
-          for(var i=0;i<response.length;i++){
-            $('#myTable tbody').append('<tr>' +
-                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                    '<td>' + response[i].id +  '</td>' +
-                    '<td>' + response[i].name +  '</td>' +
-                    '<td>' + response[i].topics.name +  '</td>' +
-                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                    '<td>' + response[i].status + '</td>' +
-                    '<td></td>' +
-                    '</tr>');
-          }
-
-          new Toast({
-            title: 'Message',
-            text: 'Collection is deleted !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
-        }
-      },
-      error: function (error){
-        console.log("error: " + JSON.stringify(error));
-      }
-    })
-  }
-  function setBlockCollectionStatus(status){
-    var checkedValues = [];
-    $.each($("input[name='checkedIds']:checked"), function(){
-      checkedValues.push($(this).val());
-    });
-
-    var data = 'id=' + checkedValues + "&flag=" + status;
-    $.ajax({
-      url:"/status_collection",
-      type: "POST",
-      data: data,
-      success: function (response){
-        if(response == 'login'){
-          window.location.href = "/login";
-        } else {
-          $("#myTable > tbody").html("");
-          $('#select-all').prop('checked', false);
-          for(var i=0;i<response.length;i++){
-            $('#myTable tbody').append('<tr>' +
-                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                    '<td>' + response[i].id +  '</td>' +
-                    '<td>' + response[i].name +  '</td>' +
-                    '<td>' + response[i].topics.name +  '</td>' +
-                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                    '<td>' + response[i].status + '</td>' +
-                    '<td></td>' +
-                    '</tr>');
-          }
-
-          new Toast({
-            title: 'Message',
-            text: 'Collection is updated !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
-        }
-      },
-      error: function (error){
-        console.log("error: " + JSON.stringify(error));
-      }
-    })
   }
 </script>
 <style>
