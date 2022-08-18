@@ -1,6 +1,6 @@
 package com.example.courseproject.Controllers;
 
-import com.example.courseproject.CustomUserDetails;
+import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.*;
 import com.example.courseproject.model.*;
 import com.example.courseproject.model.Collections;
@@ -30,10 +30,10 @@ public class CollectionController {
     private TopicRepository topicRepository;
 
     @Autowired
-    private ColumnTypeRepositories columnTypeRepositories;
+    private ColumnTypeRepository columnTypeRepository;
 
     @Autowired
-    private CollectionColumnRepositories collectionColumnRepositories;
+    private CollectionColumnRepository collectionColumnRepository;
 
     @GetMapping("/collection_settings")
     public String viewTopicSettingsPage(Authentication authentication, HttpServletRequest request, Model model){
@@ -44,7 +44,7 @@ public class CollectionController {
         request.setAttribute("username",customUserDetails.getFullName());
         List<Topics> listTopics = topicRepository.findAll();
         List<Collections> listCollections = collectionRepository.findAll();
-        List<ColumnType> listColumnType= columnTypeRepositories.findAll();
+        List<ColumnType> listColumnType= columnTypeRepository.findAll();
         model.addAttribute("listCollections",listCollections);
         model.addAttribute("listTopics",listTopics);
         model.addAttribute("listColumnType",listColumnType);
@@ -82,13 +82,13 @@ public class CollectionController {
                     int i=0;
                     for (String typeId:typeIds.split(",")) {
                         ColumnType columnType = new ColumnType();
-                        Optional<ColumnType> optinalEntity = columnTypeRepositories.findById(Long.valueOf(typeId));
+                        Optional<ColumnType> optinalEntity = columnTypeRepository.findById(Long.valueOf(typeId));
                         columnType = optinalEntity.get();
                         CollectionColumns collectionColumns = new CollectionColumns();
                         collectionColumns.setCollection(collections);
                         collectionColumns.setColumnType(columnType);
                         collectionColumns.setName(columnNames.split(",")[i]);
-                        collectionColumnRepositories.save(collectionColumns);
+                        collectionColumnRepository.save(collectionColumns);
                         i++;
                     }
 

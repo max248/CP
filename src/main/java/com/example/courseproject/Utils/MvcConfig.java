@@ -1,4 +1,4 @@
-package com.example.courseproject;
+package com.example.courseproject.Utils;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

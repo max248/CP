@@ -1,6 +1,6 @@
 package com.example.courseproject.Controllers;
 
-import com.example.courseproject.CustomUserDetails;
+import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.RoleRepository;
 import com.example.courseproject.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

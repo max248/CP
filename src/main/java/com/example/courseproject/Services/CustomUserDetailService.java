@@ -1,4 +1,4 @@
-package com.example.courseproject;
+package com.example.courseproject.Services;
 import com.example.courseproject.Repositories.UserRepository;
 import com.example.courseproject.model.User;
 import org.springframework.beans.factory.annotation.Autowired;

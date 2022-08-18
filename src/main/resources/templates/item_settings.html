@@ -24,6 +24,8 @@
   <link rel="stylesheet" th:href="@{css/perfect-scrollbar.css}"/>
   <!-- custom css -->
   <link rel="stylesheet" th:href="@{css/custom.css}"/>
+  <link rel="stylesheet" th:href="@{css/tags-standalone.css}"/>
+<!--  <link rel="stylesheet" th:href="@{css/tags-standalone.scss}"/>-->
   <link th:href="@{/css/toast.css}" rel="stylesheet">
   <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/css/bootstrap-select.min.css}" rel="stylesheet">
@@ -36,6 +38,7 @@
   <script th:src="@{js/custom.js}"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/js/toast.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/tags.js}"></script>
 </head>
 <body class="dashboard dashboard_1">
 <div class="full_container">
@@ -66,7 +69,7 @@
           <li><a th:href="@{/topic_settings}"><i class="fa fa-list"></i> <span>Topics</span></a></li>
           <li><a th:href="@{/collection_settings}"><i class="fa fa-outdent"></i> <span>Collections</span></a></li>
           <li><a th:href="@{/item_settings}"><i class="fa fa-align-left" aria-hidden="true"></i> <span>Items</span></a></li>
-          <li><a href="#"><i class="fa fa-slack" aria-hidden="true"></i> <span>Tags</span></a></li>
+          <li><a th:href="@{/tag_settings}"><i class="fa fa-slack" aria-hidden="true"></i> <span>Tags</span></a></li>
         </ul>
       </div>
     </nav>
@@ -200,13 +203,22 @@
           </select>
         </div>
         <div class="form-group col-md-12">
+          <label class="form-label" for="item_name">Item Name</label>
           <input class="form-control" type="text" id="item_name" placeholder="Enter a Item name">
         </div>
-        <div>
-          <span>Columns fields</span>
+        <div class="form-group col-md-12">
+          <label class="form-label" for="input_fields_wrap">Columns fields</label>
           <div class="input_fields_wrap" id="input_fields_wrap">
           </div>
         </div>
+        <div class="form-group col-md-12">
+          <label class="form-label" for="tags">Tags</label>
+          <select class="form-select" id="tags" multiple data-allow-new="true" data-clear-label="Clear">
+            <option th:each="tag : ${listTags}" th:value="${tag.id}" th:text="${tag.name}"> </option>
+          </select>
+          <div class="invalid-feedback">Please select a valid tag.</div>
+        </div>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -218,6 +230,9 @@
 </body>
 </html>
 <script>
+  $( document ).ready(function() {
+    Tags.init("select[multiple]");
+  });
   $('#select-all').click(function(event) {
     if(this.checked) {
       $(':checkbox').each(function() {
@@ -275,10 +290,15 @@
         val: $(this).val()
       };
     }).get();
+
+    console.log("tags:" + $("#tags").val())
+
+
     console.log("array: "+ JSON.stringify(array));
 
     var data = 'itemName=' + itemName + '&collectionId='+ collectionId +
-            '&collectionColumnValues=' + JSON.stringify(array);
+            '&collectionColumnValues=' + JSON.stringify(array) +
+            '&tags='+$("#tags").val();
     $.ajax({
       url: "/add_item",
       type: "POST",

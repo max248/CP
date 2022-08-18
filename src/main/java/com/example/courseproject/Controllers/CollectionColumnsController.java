@@ -1,6 +1,6 @@
 package com.example.courseproject.Controllers;
 
-import com.example.courseproject.Repositories.CollectionColumnRepositories;
+import com.example.courseproject.Repositories.CollectionColumnRepository;
 import com.example.courseproject.model.CollectionColumns;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,12 @@ import java.util.List;
 public class CollectionColumnsController {
 
     @Autowired
-    private CollectionColumnRepositories collectionColumnRepositories;
+    private CollectionColumnRepository collectionColumnRepository;
 
     @PostMapping("/get_collection_columns")
     public void getColumnsByCollectionId(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String collection_id = request.getParameter("collection_id");
-        List<CollectionColumns> collectionColumnsList = collectionColumnRepositories.findAllByCollection(Long.valueOf(collection_id));
+        List<CollectionColumns> collectionColumnsList = collectionColumnRepository.findAllByCollection(Long.valueOf(collection_id));
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         Gson gson = new Gson();

@@ -1,9 +1,10 @@
 package com.example.courseproject.Controllers;
 
-import com.example.courseproject.CustomUserDetails;
+import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.*;
 import com.example.courseproject.model.*;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +32,16 @@ public class ItemController {
     private CollectionRepository collectionRepository;
 
     @Autowired
-    private CollectionColumnRepositories collectionColumnRepositories;
+    private CollectionColumnRepository collectionColumnRepository;
 
     @Autowired
-    private ItemDataRepositories itemDataRepositories;
+    private ItemDataRepository itemDataRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
+    private ItemTagsRepository itemTagsRepository;
 
     @GetMapping("/item_settings")
     public String viewItemSettingsPage(Authentication authentication, HttpServletRequest request, Model model){
@@ -46,8 +52,10 @@ public class ItemController {
         request.setAttribute("username",customUserDetails.getFullName());
         List<Items> itemsList = itemRepository.findAll();
         List<Collections> collectionsList = collectionRepository.findAll();
+        List<Tags> tagsList = tagRepository.findAll();
         model.addAttribute("listItems",itemsList);
         model.addAttribute("listCollections",collectionsList);
+        model.addAttribute("listTags",tagsList);
         return "item_settings";
     }
 
@@ -60,6 +68,7 @@ public class ItemController {
             String itemName = request.getParameter("itemName") != null ? request.getParameter("itemName") : "";
             String collectionId = request.getParameter("collectionId") != null ? request.getParameter("collectionId") : "";
             String collectionColumnValues = request.getParameter("collectionColumnValues") != null ? request.getParameter("collectionColumnValues") : "";
+            String tags = request.getParameter("tags") != null ? request.getParameter("tags") : "";
             Gson gson = new Gson();
             JsonModel[] jsonModel = gson.fromJson(collectionColumnValues.toString(),JsonModel[].class);
 
@@ -81,14 +90,41 @@ public class ItemController {
                 } else {
                     items = itemRepository.save(items);
                     for(int i=0;i<jsonModel.length;i++){
-                        List<CollectionColumns> collectionColumns = collectionColumnRepositories.findByNameCollection(collections.getId(),jsonModel[i].getLabel());
+                        List<CollectionColumns> collectionColumns = collectionColumnRepository.findByNameCollection(collections.getId(),jsonModel[i].getLabel());
                         if(collectionColumns.size()>0){
                             ItemData itemData = new ItemData();
                             itemData.setItem(items);
                             itemData.setCollectionColumns(collectionColumns.get(0));
                             itemData.setData(jsonModel[i].getVal());
-                            itemDataRepositories.save(itemData);
+                            itemDataRepository.save(itemData);
                         }
+                    }
+
+                    for (String tag: tags.split(",")) {
+                        Tags tags1 = new Tags();
+                        if(isNumeric(tag)){
+                            Optional<Tags> optionalTags = tagRepository.findById(Long.valueOf(tag));
+                            if(optionalTags != null && optionalTags.get() != null && optionalTags.get().getId()>0){
+                                tags1 = optionalTags.get();
+                            } else {
+                                tags1.setName(tag);
+                                tags1.setCreateDate(new Date());
+                                tags1.setUser(user);
+                                tags1.setStatus(true);
+                                tags1 = tagRepository.save(tags1);
+                            }
+                        } else {
+                            tags1.setName(tag);
+                            tags1.setCreateDate(new Date());
+                            tags1.setUser(user);
+                            tags1.setStatus(true);
+                            tags1 = tagRepository.save(tags1);
+                        }
+                        ItemTags itemTags = new ItemTags();
+                        itemTags.setItems(items);
+                        itemTags.setTags(tags1);
+                        itemTags.setCreateDate(new Date());
+                        itemTagsRepository.save(itemTags);
                     }
                 }
             } else {
@@ -105,6 +141,8 @@ public class ItemController {
         }
 
     }
-
+    public static boolean isNumeric(final String str) {
+        return NumberUtils.isDigits(str);
+    }
 
 }
