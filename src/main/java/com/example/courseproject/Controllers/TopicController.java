@@ -36,7 +36,7 @@ public class TopicController {
             return "login";
         }
         request.setAttribute("username",customUserDetails.getFullName());
-        List<Topics> topicsList = topicRepository.findAll();
+        List<Topics> topicsList = topicRepository.findAllOrderById();
         model.addAttribute("listTopics",topicsList);
         return "topic_settings";
     }
@@ -69,7 +69,7 @@ public class TopicController {
                 response.getWriter().write("error");
                 return;
             }
-            List<Topics> listTopics = topicRepository.findAll();
+            List<Topics> listTopics = topicRepository.findAllOrderById();
             Gson gson = new Gson();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -88,7 +88,7 @@ public class TopicController {
             for (String id:delete_ids.split(",")){
                 topicRepository.deleteById(Long.valueOf(id));
             }
-            List<Topics> topicsList = topicRepository.findAll();
+            List<Topics> topicsList = topicRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(topicsList));
         } else {
@@ -106,7 +106,23 @@ public class TopicController {
             for (String id:delete_ids.split(",")){
                 topicRepository.updateStatusById(Long.valueOf(id),flag);
             }
-            List<Topics> topicsList = topicRepository.findAll();
+            List<Topics> topicsList = topicRepository.findAllOrderById();
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(topicsList));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
+    }
+    @PostMapping("/edit_topic")
+    public void editTopic(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            String name = request.getParameter("name");
+            Long id = request.getParameter("id") != null ? Long.valueOf(request.getParameter("id")) : 0;
+            topicRepository.updateNameById(id,name);
+            List<Topics> topicsList = topicRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(topicsList));
         } else {

@@ -67,7 +67,7 @@
           <div class="user_profle_side">
             <div class="user_img"><img class="img-responsive" src="/img/user_img.jpg" alt="#"/></div>
             <div class="user_info">
-              <h6>John David</h6>
+              <h6><label th:text="${username}"/></h6>
               <p><span class="online_animation"></span> Online</p>
             </div>
           </div>
@@ -99,7 +99,7 @@
                   <li>
                     <a class="dropdown-toggle" data-toggle="dropdown"><img
                             class="img-responsive rounded-circle" src="/img/user_img.jpg"
-                            alt="#"/><span class="name_user">John David</span></a>
+                            alt="#"/><span class="name_user" th:text="${username}"></span></a>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="/user_profil">My Profile</a>
                       <a class="dropdown-item" href="/logout"><span>Log Out</span> <i
@@ -124,7 +124,7 @@
                     <h2>Topics</h2>Settings
                   </div>
                   <div class="col-md-2">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus" aria-hidden="true"></i> Add a new Topic</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModel"><i class="fa fa-plus" aria-hidden="true"></i> Add a new Topic</button>
                   </div>
                 </div>
               </div>
@@ -159,7 +159,7 @@
                           <td style="text-align: left" th:text="${topic.user.fullName}"></td>
                           <td th:text="${topic.status}"></td>
                           <td>
-                            <button class="btn btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                            <button class="btn btn-primary editBtn" th:onclick="showEditModal([[${topic.id}]],[[${topic.name}]])"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                             <span th:switch="${topic.status}">
                                       <button th:case="true" th:onclick="'setBlockTopicStatus(' + ${topic.id} + ',false)'" class="btn btn-success"><i class="fa fa-unlock"></i></button>
                                       <button th:case="false" th:onclick="'setBlockTopicStatus(' + ${topic.id}+ ',true)'" class="btn btn-secondary"><i class="fa fa-lock"></i></button>
@@ -191,11 +191,11 @@
     </div>
   </div>
 </div>
-<div class="modal fade" id="exampleModal" name="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModel" name="myModel" tabindex="-1" role="dialog" aria-labelledby="myModelLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add a new Topic</h5>
+        <h5 class="modal-title" id="myModelLabel">Add a new Topic</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -209,6 +209,29 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" onclick="addTopic()" class="btn btn-primary" data-dismiss="modal">Save</button>
       </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade editModel" id="editModel" name="editModel" tabindex="1" role="dialog" aria-labelledby="editModelLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModelLabel">Edit Topic</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <input class="form-control" type="number" id="id" hidden>
+          <input class="form-control" type="text" id="edit_name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="editModel">Close</button>
+        <button type="button" onclick="editTopic()" class="btn btn-primary" data-dismiss="editModel">Save</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -231,6 +254,32 @@
     }
   });
 
+  function showEditModal(id,name){
+    console.log("name:" + name);
+    $('#id').val(id);
+    $('#edit_name').val(name);
+    $("#editModel").modal("show");
+  }
+  function editTopic(){
+    var data = 'id=' + $('#id').val() + "&name=" + $('#edit_name').val();
+    $.ajax({
+      url:"/edit_topic",
+      type: "POST",
+      data: data,
+      success: function (response){
+        if(response == 'login'){
+          window.location.href = "/login";
+        } else {
+          $("#editModel").modal("hide");
+          appendRows(response);
+          showToast('Topic status is updated !!!');
+        }
+      },
+      error: function (error){
+        console.log("error: " + JSON.stringify(error));
+      }
+    })
+  }
   function addTopic(){
     var topicName = $("#topic_name").val();
     var data = 'topic_name=' + topicName;
@@ -240,7 +289,7 @@
       data: data,
       success: function (response){
         appendRows(response);
-        showToasst('Topic is saved !!!');
+        showToast('Topic is saved !!!');
       },
       error: function (error){
         console.log("error: " + JSON.stringify(error));
@@ -267,7 +316,7 @@
           window.location.href = "/login";
         } else {
           appendRows(response);
-          showToasst('Topic is deleted !!!');
+          showToast('Topic is deleted !!!');
         }
       },
       error: function (error){
@@ -293,7 +342,7 @@
           window.location.href = "/login";
         } else {
           appendRows(response);
-          showToasst('Topic status is changed !!!');
+          showToast('Topic status is changed !!!');
         }
       },
       error: function (error){
@@ -305,6 +354,7 @@
     $("#myTable > tbody").html("");
     $('#select-all').prop('checked', false);
     for(var i=0;i<response.length;i++){
+      let name = response[i].name;
       var rowTxt = response[i].status? '<button th:case="true" class="btn btn-success" onclick="setBlockTopicStatus('+ response[i].id + ',false)">' +
               '<i class="fa fa-unlock"></i></button>' :
               '<button th:case="false" class="btn btn-secondary" onclick="setBlockTopicStatus(' + response[i].id + ',true)">' +
@@ -316,7 +366,7 @@
               '<td style="text-align: left">' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
               '<td>' + response[i].status + '</td>' +
               '<td>' +
-              '<button class="btn btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
+              '<button class="btn btn-primary" onclick="showEditModal(' + response[i].id + ',\'' + name + '\')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
               '<span></span>' +
                rowTxt +
               '<button class="btn btn-danger" onclick="deleteTopic(' + response[i].id + ')"><i class="fa fa-trash-o" aria-hidden="true"></i></button>' +
@@ -324,7 +374,7 @@
               '</tr>');
     }
   }
-  function showToasst(msg){
+  function showToast(msg){
     new Toast({
       title: 'Message',
       text: msg,
