@@ -119,58 +119,61 @@
           <div class="row column_title">
             <div class="col-md-12">
               <div class="page_title">
-                <h2>Topics</h2>Settings
+                <div class="row">
+                  <div class="col-md-10">
+                    <h2>Topics</h2>Settings
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus" aria-hidden="true"></i> Add a new Topic</button>
+                  </div>
+                </div>
               </div>
-               <div class="text-right">
-                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus" aria-hidden="true"></i> Add a new Topic</button>
-               </div>
             </div>
           </div>
-          <div class="row column1">
-            <div class="container-fluid">
+          <div class="w-100 px-2">
+            <h1 class="mb-0 h4 text-center">List of All Topics</b></h1>
+            <div class="container">
+              <!--Grid row-->
               <div class="row">
-                <div class="w-100 px-2">
-                  <br><br>
-                  <h1 class="mb-0 h4 text-center">List of All Topics</b></h1>
-                  <div class="container">
-                    <!--Grid row-->
-                    <div class="row">
-                      <!--Grid column-->
-                      <div class="col-md-12 mb-12">
-                        <!--Section: Post data-mdb-->
-                        <section class="border-bottom mb-8 text-center">
-                          <div class="tableFixHead">
-                            <table class="table table-fixed" id="myTable">
-                              <thead>
-                              <tr>
-                                <th style="width: 2%";><input type="checkbox" name="select-all" id="select-all" /></th>
-                                <th style="width: 10%;">ID</th>
-                                <th style="width: 30%;">Name</th>
-                                <th style="width: 30%;">Author</th>
-                                <th style="width: 10%;">Status</th>
-                                <th style="width: 10%;">Action</th>
-                              </tr>
-                              </thead>
-                              <tbody id="bodyTable">
-                              <tr th:each="topic : ${listTopics}">
-                                <td><input type="checkbox" name="checkedIds" th:value="${topic.id}"></td>
-                                <td th:text="${topic.id}"></td>
-                                <td style="text-align: left" th:text="${topic.name}"></td>
-                                <td style="text-align: left" th:text="${topic.user.fullName}"></td>
-                                <td th:text="${topic.status}"></td>
-                                <td></td>
-                              </tr>
-                              </tbody>
-
-                            </table>
-                          </div>
-                          <button class="btn btn-primary" id="block" onclick="setBlockTopicStatus(false)">Block</button>
-                          <button class="btn btn-secondary" id="unblock" onclick="setBlockTopicStatus(true)">Unblock</button>
-                          <button class="btn btn-danger" id="delete" onclick="deleteTopic()">Delete</button>
-                        </section>
-                      </div>
+                <!--Grid column-->
+                <div class="col-md-12 mb-12">
+                  <!--Section: Post data-mdb-->
+                  <section class="border-bottom mb-8 text-center">
+                    <div class="tableFixHead">
+                      <table class="table table-fixed table-bordered" id="myTable">
+                        <thead>
+                        <tr>
+                          <th style="width: 2%";><input type="checkbox" name="select-all" id="select-all" /></th>
+                          <th style="width: 5%;">ID</th>
+                          <th style="width: 30%;">Name</th>
+                          <th style="width: 25%;">Author</th>
+                          <th style="width: 10%;">Status</th>
+                          <th style="width: 25%;">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="bodyTable">
+                        <tr th:each="topic : ${listTopics}">
+                          <td><input type="checkbox" name="checkedIds" th:value="${topic.id}"></td>
+                          <td th:text="${topic.id}"></td>
+                          <td style="text-align: left" th:text="${topic.name}"></td>
+                          <td style="text-align: left" th:text="${topic.user.fullName}"></td>
+                          <td th:text="${topic.status}"></td>
+                          <td>
+                            <button class="btn btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                            <span th:switch="${topic.status}">
+                                      <button th:case="true" th:onclick="'setBlockTopicStatus(' + ${topic.id} + ',false)'" class="btn btn-success"><i class="fa fa-unlock"></i></button>
+                                      <button th:case="false" th:onclick="'setBlockTopicStatus(' + ${topic.id}+ ',true)'" class="btn btn-secondary"><i class="fa fa-lock"></i></button>
+                                    </span>
+                            <button class="btn btn-danger" th:onclick="'deleteTopic(' + ${topic.id}+ ')'"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
                     </div>
-                  </div>
+                    <button class="btn btn-primary" id="block" onclick="setBlockTopicStatus(0,false)">Block</button>
+                    <button class="btn btn-success" id="unblock" onclick="setBlockTopicStatus(0,true)">Unblock</button>
+                    <button class="btn btn-danger" id="delete" onclick="deleteTopic(0)">Delete</button>
+                  </section>
                 </div>
               </div>
             </div>
@@ -178,8 +181,7 @@
           <!-- footer -->
           <div class="container-fluid">
             <div class="footer">
-              <p>Copyright © 2018 Designed by html.design. All rights reserved.<br><br>
-                Distributed By: <a href="#">ThemeWagon</a>
+              <p>Copyright © 2022 Designed by Abbos Yuldoshev. All rights reserved.<br><br>
               </p>
             </div>
           </div>
@@ -230,8 +232,6 @@
   });
 
   function addTopic(){
-    var myModal = new bootstrap.Modal(document.getElementById("exampleModal"), {});
-    myModal.hide();
     var topicName = $("#topic_name").val();
     var data = 'topic_name=' + topicName;
     $.ajax({
@@ -239,27 +239,8 @@
       type: "POST",
       data: data,
       success: function (response){
-        $("#myTable > tbody").html("");
-        $('#select-all').prop('checked', false);
-        for(var i=0;i<response.length;i++){
-          $('#myTable tbody').append('<tr>' +
-                  '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                  '<td>' + response[i].id +  '</td>' +
-                  '<td>' + response[i].name +  '</td>' +
-                  '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                  '<td>' + response[i].status + '</td>' +
-                  '<td></td>' +
-                  '</tr>');
-        }
-
-        new Toast({
-          title: 'Message',
-          text: 'Topic is saved !!!',
-          theme: 'light',
-          autohide: true,
-          interval: 10000
-        });
-
+        appendRows(response);
+        showToasst('Topic is saved !!!');
       },
       error: function (error){
         console.log("error: " + JSON.stringify(error));
@@ -267,11 +248,14 @@
     })
 
   }
-  function deleteTopic(){
+  function deleteTopic(id){
     var checkedValues = [];
     $.each($("input[name='checkedIds']:checked"), function(){
       checkedValues.push($(this).val());
     });
+    if(id>0){
+      checkedValues.push(id);
+    }
 
     var data = 'id=' + checkedValues;
     $.ajax({
@@ -282,26 +266,8 @@
         if(response == 'login'){
           window.location.href = "/login";
         } else {
-          $("#myTable > tbody").html("");
-          $('#select-all').prop('checked', false);
-          for(var i=0;i<response.length;i++){
-            $('#myTable tbody').append('<tr>' +
-                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                    '<td>' + response[i].id +  '</td>' +
-                    '<td>' + response[i].name +  '</td>' +
-                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                    '<td>' + response[i].status + '</td>' +
-                    '<td></td>' +
-                    '</tr>');
-          }
-
-          new Toast({
-            title: 'Message',
-            text: 'Topic is deleted !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
+          appendRows(response);
+          showToasst('Topic is deleted !!!');
         }
       },
       error: function (error){
@@ -309,12 +275,14 @@
       }
     })
   }
-  function setBlockTopicStatus(status){
+  function setBlockTopicStatus(id,status){
     var checkedValues = [];
     $.each($("input[name='checkedIds']:checked"), function(){
       checkedValues.push($(this).val());
     });
-
+    if(id>0){
+      checkedValues.push(id);
+    }
     var data = 'id=' + checkedValues + "&flag=" + status;
     $.ajax({
       url:"/status_topic",
@@ -324,26 +292,8 @@
         if(response == 'login'){
           window.location.href = "/login";
         } else {
-          $("#myTable > tbody").html("");
-          $('#select-all').prop('checked', false);
-          for(var i=0;i<response.length;i++){
-            $('#myTable tbody').append('<tr>' +
-                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                    '<td>' + response[i].id +  '</td>' +
-                    '<td>' + response[i].name +  '</td>' +
-                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                    '<td>' + response[i].status + '</td>' +
-                    '<td></td>' +
-                    '</tr>');
-          }
-
-          new Toast({
-            title: 'Message',
-            text: 'Topic is deleted !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
+          appendRows(response);
+          showToasst('Topic status is changed !!!');
         }
       },
       error: function (error){
@@ -351,11 +301,43 @@
       }
     })
   }
+  function appendRows(response){
+    $("#myTable > tbody").html("");
+    $('#select-all').prop('checked', false);
+    for(var i=0;i<response.length;i++){
+      var rowTxt = response[i].status? '<button th:case="true" class="btn btn-success" onclick="setBlockTopicStatus('+ response[i].id + ',false)">' +
+              '<i class="fa fa-unlock"></i></button>' :
+              '<button th:case="false" class="btn btn-secondary" onclick="setBlockTopicStatus(' + response[i].id + ',true)">' +
+              '<i class="fa fa-lock"></i></button>';
+      $('#myTable tbody').append('<tr>' +
+              '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
+              '<td>' + response[i].id +  '</td>' +
+              '<td style="text-align: left">' + response[i].name +  '</td>' +
+              '<td style="text-align: left">' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
+              '<td>' + response[i].status + '</td>' +
+              '<td>' +
+              '<button class="btn btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
+              '<span></span>' +
+               rowTxt +
+              '<button class="btn btn-danger" onclick="deleteTopic(' + response[i].id + ')"><i class="fa fa-trash-o" aria-hidden="true"></i></button>' +
+              '</td>' +
+              '</tr>');
+    }
+  }
+  function showToasst(msg){
+    new Toast({
+      title: 'Message',
+      text: msg,
+      theme: 'light',
+      autohide: true,
+      interval: 10000
+    });
+  }
 </script>
 <style>
   .tableFixHead {
     overflow: auto;
-    height: 60vh;
+    height: 45vh;
   }
 
   .tableFixHead thead th {
