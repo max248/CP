@@ -27,14 +27,14 @@
   <link th:href="@{/css/toast.css}" rel="stylesheet">
   <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/css/bootstrap-select.min.css}" rel="stylesheet">
-  <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--  <script th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>-->
   <script th:src="@{/js/popper.min.js}"></script>
   <script th:src="@{/js/bootstrap.min.js}"></script>
   <script th:src="@{/js/bootstrap-select.min.js}"></script>
   <script th:src="@{js/animate.js}"></script>
   <script th:src="@{js/owl.carousel.js}"></script>
   <script th:src="@{js/custom.js}"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/js/toast.min.js}"></script>
 </head>
 <body class="dashboard dashboard_1">
@@ -105,65 +105,65 @@
           <div class="row column_title">
             <div class="col-md-12">
               <div class="page_title">
-                <h2>Collections</h2>Settings
-              </div>
-              <div class="text-right">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="clearDiv()">
-                  <i class="fa fa-plus" aria-hidden="true"></i> Add a new Collection</button>
+                <div class="row">
+                  <div class="col-md-10">
+                    <h2>Collections</h2>Settings
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModel" onclick="clearDiv()">
+                      <i class="fa fa-plus" aria-hidden="true"></i> Add a new Collection</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="row column1">
-            <div class="container-fluid">
+          <div class="w-100 px-2">
+            <h1 class="mb-0 h4 text-center">List of All Collections</b></h1>
+            <div class="container">
+              <!--Grid row-->
               <div class="row">
-                <div class="w-100 px-2">
-                  <br><br>
-                  <h1 class="mb-0 h4 text-center">List of All Collections</b></h1>
-                  <div class="container">
-                    <!--Grid row-->
-                    <div class="row">
-                      <!--Grid column-->
-                      <div class="col-md-12 mb-12">
-                        <!--Section: Post data-mdb-->
-                        <section class="border-bottom mb-8 text-center">
-                          <div class="tableFixHead">
-                            <table class="table table-fixed" id="myTable">
-                              <thead>
-                              <tr>
-                                <th style="width: 2%";><input type="checkbox" name="select-all" id="select-all" /></th>
-                                <th style="width: 10%;">ID</th>
-                                <th style="width: 30%;">Name</th>
-                                <th style="width: 15%;">Topic</th>
-                                <th style="width: 15%;">Author</th>
-                                <th style="width: 15%;">Status</th>
-                                <th style="width: 10%;">Action</th>
-                              </tr>
-                              </thead>
-                              <tbody id="bodyTable">
-                              <tr th:each="collection : ${listCollections}">
-                                <td><input type="checkbox" name="checkedIds" th:value="${collection.id}"></td>
-                                <td th:text="${collection.id}"></td>
-                                <td style="text-align: left" th:text="${collection.name}"></td>
-                                <td style="text-align: left" th:text="${collection.topics.name}"></td>
-                                <td style="text-align: left" th:text="${collection.user.fullName}"></td>
-                                <td th:text="${collection.status}"></td>
-                                <td>
-                                  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                  <i class="fa fa-lock" aria-hidden="true"></i>
-                                  <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </td>
-                              </tr>
-                              </tbody>
+                <!--Grid column-->
+                <div class="col-md-12 mb-12">
+                  <!--Section: Post data-mdb-->
+                  <section class="border-bottom mb-8 text-center">
+                    <div class="tableFixHead">
+                      <table class="table table-fixed table-bordered" id="myTable">
+                        <thead>
+                        <tr>
+                          <th style="width: 2%";><input type="checkbox" name="select-all" id="select-all" /></th>
+                          <th style="width: 5%;">ID</th>
+                          <th style="width: 25%;">Name</th>
+                          <th style="width: 20%;">Topic</th>
+                          <th style="width: 25%;">Author</th>
+                          <th style="width: 10%;">Status</th>
+                          <th style="width: 15%;">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="bodyTable">
+                        <tr th:each="collection : ${listCollections}">
+                          <td><input type="checkbox" name="checkedIds" th:value="${collection.id}"></td>
+                          <td th:text="${collection.id}"></td>
+                          <td style="text-align: left" th:text="${collection.name}"></td>
+                          <td style="text-align: left" th:text="${collection.topics.name}"></td>
+                          <td style="text-align: left" th:text="${collection.user.fullName}"></td>
+                          <td th:text="${collection.status}"></td>
+                          <td>
+                            <button class="btn btn-primary editBtn" th:onclick="showEditModal([[${collection.id}]],[[${collection.name}]])"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                            <span th:switch="${collection.status}">
+                                      <button th:case="true" th:onclick="'setBlockCollectionStatus(' + ${collection.id} + ',false)'" class="btn btn-success"><i class="fa fa-unlock"></i></button>
+                                      <button th:case="false" th:onclick="'setBlockCollectionStatus(' + ${collection.id}+ ',true)'" class="btn btn-secondary"><i class="fa fa-lock"></i></button>
+                                    </span>
+                            <button class="btn btn-danger" th:onclick="'deleteCollection(' + ${collection.id}+ ')'"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                          </td>
+                        </tr>
+                        </tbody>
 
-                            </table>
-                          </div>
-                          <button class="btn btn-primary" id="block" onclick="setBlockTopicStatus(false)">Block</button>
-                          <button class="btn btn-secondary" id="unblock" onclick="setBlockCollectionStatus(true)">Unblock</button>
-                          <button class="btn btn-danger" id="delete" onclick="deleteCollection()">Delete</button>
-                        </section>
-                      </div>
+                      </table>
                     </div>
-                  </div>
+                    <button class="btn btn-primary" id="block" onclick="setBlockTopicStatus(false)">Block</button>
+                    <button class="btn btn-secondary" id="unblock" onclick="setBlockCollectionStatus(true)">Unblock</button>
+                    <button class="btn btn-danger" id="delete" onclick="deleteCollection()">Delete</button>
+                  </section>
                 </div>
               </div>
             </div>
@@ -171,8 +171,7 @@
           <!-- footer -->
           <div class="container-fluid">
             <div class="footer">
-              <p>Copyright © 2018 Designed by html.design. All rights reserved.<br><br>
-                Distributed By: <a href="#">ThemeWagon</a>
+              <p>Copyright © 2022 Designed by Abbos Yuldoshev. All rights reserved.<br><br>
               </p>
             </div>
           </div>
@@ -182,11 +181,11 @@
     </div>
   </div>
 </div>
-<div class="modal fade" id="exampleModal" name="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModel" name="myModel" tabindex="-1" role="dialog" aria-labelledby="myModelLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content custom">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add a new Topic</h5>
+        <h5 class="modal-title" id="myModelLabel">Add a new Topic</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -211,6 +210,29 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" onclick="addCollection()" class="btn btn-primary" data-dismiss="modal">Save</button>
       </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade editModel" id="editModel" name="editModel" tabindex="1" role="dialog" aria-labelledby="editModelLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModelLabel">Edit Topic</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <input class="form-control" type="number" id="id" hidden>
+          <input class="form-control" type="text" id="edit_name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" onclick="editCollection()" class="btn btn-primary" data-dismiss="editModel">Save</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -275,11 +297,37 @@
       });
     }
   });
- function clearDiv(){
+  function showEditModal(id,name){
+    console.log("name:" + name);
+    $('#id').val(id);
+    $('#edit_name').val(name);
+    $("#editModel").modal("show");
+  }
+  function clearDiv(){
    $("#input_fields_wrap").empty();
  }
+  function editCollection(){
+    var data = 'id=' + $('#id').val() + "&name=" + $('#edit_name').val();
+    $.ajax({
+      url:"/edit_collection",
+      type: "POST",
+      data: data,
+      success: function (response){
+        if(response == 'login'){
+          window.location.href = "/login";
+        } else {
+          $("#editModel").modal("hide");
+          appendRows(response);
+          showToast('Topic status is updated !!!');
+        }
+      },
+      error: function (error){
+        console.log("error: " + JSON.stringify(error));
+      }
+    })
+  }
   function addCollection(){
-    var myModal = new bootstrap.Modal(document.getElementById("exampleModal"), {});
+    var myModal = new bootstrap.Modal(document.getElementById("myModel"), {});
     myModal.hide();
     var topicId = $("#topicId").val();
     var topicName = $("#topic_name").val();
@@ -312,26 +360,8 @@
             interval: 10000
           });
         } else {
-          $("#myTable > tbody").html("");
-          $('#select-all').prop('checked', false);
-          for(var i=0;i<response.length;i++){
-            $('#myTable tbody').append('<tr>' +
-                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                    '<td>' + response[i].id +  '</td>' +
-                    '<td>' + response[i].name +  '</td>' +
-                    '<td>' + response[i].topics.name +  '</td>' +
-                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                    '<td>' + response[i].status + '</td>' +
-                    '<td></td>' +
-                    '</tr>');
-          }
-          new Toast({
-            title: 'Message',
-            text: 'Collection is saved !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
+          appendRows(response);
+          showToast('Collection is saved !!!');
           $("#input_fields_wrap").empty();
         }
 
@@ -342,11 +372,14 @@
     })
 
   }
-  function deleteCollection(){
+  function deleteCollection(id){
     var checkedValues = [];
     $.each($("input[name='checkedIds']:checked"), function(){
       checkedValues.push($(this).val());
     });
+    if(id>0){
+      checkedValues.push(id)
+    }
 
     var data = 'id=' + checkedValues;
     $.ajax({
@@ -357,27 +390,8 @@
         if(response == 'login'){
           window.location.href = "/login";
         } else {
-          $("#myTable > tbody").html("");
-          $('#select-all').prop('checked', false);
-          for(var i=0;i<response.length;i++){
-            $('#myTable tbody').append('<tr>' +
-                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                    '<td>' + response[i].id +  '</td>' +
-                    '<td>' + response[i].name +  '</td>' +
-                    '<td>' + response[i].topics.name +  '</td>' +
-                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                    '<td>' + response[i].status + '</td>' +
-                    '<td></td>' +
-                    '</tr>');
-          }
-
-          new Toast({
-            title: 'Message',
-            text: 'Collection is deleted !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
+          appendRows(response);
+          showToast('Collection is deleted !!!');
         }
       },
       error: function (error){
@@ -385,11 +399,14 @@
       }
     })
   }
-  function setBlockCollectionStatus(status){
+  function setBlockCollectionStatus(id,status){
     var checkedValues = [];
     $.each($("input[name='checkedIds']:checked"), function(){
       checkedValues.push($(this).val());
     });
+    if(id>0){
+      checkedValues.push(id);
+    }
 
     var data = 'id=' + checkedValues + "&flag=" + status;
     $.ajax({
@@ -400,33 +417,64 @@
         if(response == 'login'){
           window.location.href = "/login";
         } else {
-          $("#myTable > tbody").html("");
-          $('#select-all').prop('checked', false);
-          for(var i=0;i<response.length;i++){
-            $('#myTable tbody').append('<tr>' +
-                    '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-                    '<td>' + response[i].id +  '</td>' +
-                    '<td>' + response[i].name +  '</td>' +
-                    '<td>' + response[i].topics.name +  '</td>' +
-                    '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-                    '<td>' + response[i].status + '</td>' +
-                    '<td></td>' +
-                    '</tr>');
-          }
+          appendRows(response);
+          // $("#myTable > tbody").html("");
+          // $('#select-all').prop('checked', false);
+          // for(var i=0;i<response.length;i++){
+          //   $('#myTable tbody').append('<tr>' +
+          //           '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
+          //           '<td>' + response[i].id +  '</td>' +
+          //           '<td>' + response[i].name +  '</td>' +
+          //           '<td>' + response[i].topics.name +  '</td>' +
+          //           '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
+          //           '<td>' + response[i].status + '</td>' +
+          //           '<td></td>' +
+          //           '</tr>');
+          // }
 
-          new Toast({
-            title: 'Message',
-            text: 'Collection is updated !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
+          showToast('Collection is updated !!!');
+
         }
       },
       error: function (error){
         console.log("error: " + JSON.stringify(error));
       }
     })
+  }
+  function appendRows(response){
+    $("#myTable > tbody").html("");
+    $('#select-all').prop('checked', false);
+    for(var i=0;i<response.length;i++){
+      let name = response[i].name;
+      var rowTxt = response[i].status? '<button th:case="true" class="btn btn-success" onclick="setBlockCollectionStatus('+ response[i].id + ',false)">' +
+              '<i class="fa fa-unlock"></i></button>' :
+              '<button th:case="false" class="btn btn-secondary" onclick="setBlockCollectionStatus(' + response[i].id + ',true)">' +
+              '<i class="fa fa-lock"></i></button>';
+      $('#myTable tbody').append('<tr>' +
+              '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
+              '<td>' + response[i].id +  '</td>' +
+              '<td style="text-align: left">' + response[i].name +  '</td>' +
+              '<td style="text-align: left">' + response[i].topics.name +  '</td>' +
+              '<td style="text-align: left">' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
+              '<td>' + response[i].status + '</td>' +
+              '<td>' +
+              '<button class="btn btn-primary" onclick="showEditModal(' + response[i].id + ',\'' + name + '\')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>' +
+              '<span></span>' +
+              rowTxt +
+              '<button class="btn btn-danger" onclick="deleteCollection(' + response[i].id + ')"><i class="fa fa-trash-o" aria-hidden="true"></i></button>' +
+              '</td>' +
+              '</tr>');
+    }
+  }
+
+  function showToast(msg){
+    new Toast({
+      title: 'Message',
+      text: msg,
+      theme: 'light',
+      autohide: true,
+      interval: 10000
+    });
   }
 </script>
 <style>

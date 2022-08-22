@@ -42,8 +42,8 @@ public class CollectionController {
             return "login";
         }
         request.setAttribute("username",customUserDetails.getFullName());
-        List<Topics> listTopics = topicRepository.findAll();
-        List<Collections> listCollections = collectionRepository.findAll();
+        List<Topics> listTopics = topicRepository.findAllOrderById();
+        List<Collections> listCollections = collectionRepository.findAllOrderById();
         List<ColumnType> listColumnType= columnTypeRepository.findAll();
         model.addAttribute("listCollections",listCollections);
         model.addAttribute("listTopics",listTopics);
@@ -102,7 +102,7 @@ public class CollectionController {
 
             List<Collections> listCollections = new ArrayList<>();
             if(user.getRole().getName().equals("ADMIN")){
-                listCollections = collectionRepository.findAll();
+                listCollections = collectionRepository.findAllOrderById();
             } else if(user.getRole().getName().equals("USER")){
                 listCollections = collectionRepository.findAllByUser(user.getId());
             }
@@ -113,7 +113,6 @@ public class CollectionController {
         }
 
     }
-
     @PostMapping("/delete_collection")
     public void deleteCollection(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
@@ -128,7 +127,7 @@ public class CollectionController {
             user = userRepository.findByEmail(customUserDetails.getUsername());
             List<Collections> listCollections = new ArrayList<>();
             if(user.getRole().getName().equals("ADMIN")){
-                listCollections = collectionRepository.findAll();
+                listCollections = collectionRepository.findAllOrderById();
             } else if(user.getRole().getName().equals("USER")){
                 listCollections = collectionRepository.findAllByUser(user.getId());
             }
@@ -139,7 +138,6 @@ public class CollectionController {
             response.getWriter().write("login");
         }
     }
-
     @PostMapping("/status_collection")
     public void statusCollection(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
@@ -155,7 +153,7 @@ public class CollectionController {
             user = userRepository.findByEmail(customUserDetails.getUsername());
             List<Collections> listCollections = new ArrayList<>();
             if(user.getRole().getName().equals("ADMIN")){
-                listCollections = collectionRepository.findAll();
+                listCollections = collectionRepository.findAllOrderById();
             } else if(user.getRole().getName().equals("USER")){
                 listCollections = collectionRepository.findAllByUser(user.getId());
             }
@@ -167,5 +165,20 @@ public class CollectionController {
         }
     }
 
-
+    @PostMapping("/edit_collection")
+    public void editTopic(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            String name = request.getParameter("name");
+            Long id = request.getParameter("id") != null ? Long.valueOf(request.getParameter("id")) : 0;
+            collectionRepository.updateNameById(id,name);
+            List<Collections> collectionsList = collectionRepository.findAllOrderById();
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(collectionsList));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
+    }
 }

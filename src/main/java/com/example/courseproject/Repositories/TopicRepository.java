@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface TopicRepository extends JpaRepository<Topics, Long> {
-    @Query("SELECT t FROM Topics t order by id")
+    @Query("SELECT t FROM Topics t order by t.id")
     List<Topics> findAllOrderById();
 
     @Query("SELECT t FROM Topics t where t.id = ?1")
