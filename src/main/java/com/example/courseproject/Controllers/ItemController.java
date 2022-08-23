@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -143,6 +144,75 @@ public class ItemController {
     }
     public static boolean isNumeric(final String str) {
         return NumberUtils.isDigits(str);
+    }
+
+    @PostMapping("/delete_item")
+    public void deleteItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            String delete_ids = request.getParameter("id");
+            for (String id:delete_ids.split(",")){
+                itemRepository.deleteById(Long.valueOf(id));
+            }
+            User user = new User();
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            user = userRepository.findByEmail(customUserDetails.getUsername());
+            List<Items> listItems = new ArrayList<>();
+            if(user.getRole().getName().equals("ADMIN")){
+                listItems = itemRepository.findAllOrderById();
+            } else if(user.getRole().getName().equals("USER")){
+                listItems = itemRepository.findAllByUser(user.getId());
+            }
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(listItems));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
+    }
+    @PostMapping("/status_item")
+    public void statusItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            boolean flag = Boolean.parseBoolean(request.getParameter("flag"));
+            String delete_ids = request.getParameter("id");
+            for (String id:delete_ids.split(",")){
+                itemRepository.updateStatusById(Long.valueOf(id),flag);
+            }
+            User user = new User();
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            user = userRepository.findByEmail(customUserDetails.getUsername());
+            List<Items> listItems = new ArrayList<>();
+            if(user.getRole().getName().equals("ADMIN")){
+                listItems = itemRepository.findAllOrderById();
+            } else if(user.getRole().getName().equals("USER")){
+                listItems = itemRepository.findAllByUser(user.getId());
+            }
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(listItems));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
+    }
+
+    @PostMapping("/edit_item")
+    public void editItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            String name = request.getParameter("name");
+            Long id = request.getParameter("id") != null ? Long.valueOf(request.getParameter("id")) : 0;
+            itemRepository.updateNameById(id,name);
+            List<Items> collectionsList = itemRepository.findAllOrderById();
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(collectionsList));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
     }
 
 }
