@@ -160,8 +160,8 @@
                         </tbody>
                       </table>
                     </div>
-                    <button class="btn btn-primary" id="block" onclick="setBlockItemStatus(false)">Block</button>
-                    <button class="btn btn-secondary" id="unblock" onclick="setBlockItemStatus(true)">Unblock</button>
+                    <button class="btn btn-primary" id="block" onclick="setBlockItemStatus(0,false)">Block</button>
+                    <button class="btn btn-secondary" id="unblock" onclick="setBlockItemStatus(0,true)">Unblock</button>
                     <button class="btn btn-danger" id="delete" onclick="deleteItem()">Delete</button>
                   </section>
                 </div>
@@ -171,8 +171,7 @@
           <!-- footer -->
           <div class="container-fluid">
             <div class="footer">
-              <p>Copyright © 2018 Designed by html.design. All rights reserved.<br><br>
-                Distributed By: <a href="#">ThemeWagon</a>
+              <p>Copyright © 2022 Designed by Abbos Yuldoshev. All rights reserved.<br><br>
               </p>
             </div>
           </div>
@@ -419,20 +418,6 @@
           window.location.href = "/login";
         } else {
           appendRows(response);
-          // $("#myTable > tbody").html("");
-          // $('#select-all').prop('checked', false);
-          // for(var i=0;i<response.length;i++){
-          //   $('#myTable tbody').append('<tr>' +
-          //           '<td><input type="checkbox" name="checkedIds" value="'+ response[i].id +'"></td>' +
-          //           '<td>' + response[i].id +  '</td>' +
-          //           '<td>' + response[i].name +  '</td>' +
-          //           '<td>' + response[i].topics.name +  '</td>' +
-          //           '<td>' + response[i].user.firstName + ' ' + response[i].user.lastName +  '</td>' +
-          //           '<td>' + response[i].status + '</td>' +
-          //           '<td></td>' +
-          //           '</tr>');
-          // }
-
           showToast('Collection is updated !!!');
 
         }

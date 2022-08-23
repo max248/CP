@@ -36,7 +36,7 @@ public class TagController {
             return "login";
         }
         request.setAttribute("username",customUserDetails.getFullName());
-        List<Tags> tagsList = tagRepository.findAll();
+        List<Tags> tagsList = tagRepository.findAllOrderById();
         model.addAttribute("tagsList",tagsList);
         return "tag_settings";
     }
@@ -69,7 +69,7 @@ public class TagController {
                 response.getWriter().write("error");
                 return;
             }
-            List<Tags> listTags = tagRepository.findAll();
+            List<Tags> listTags = tagRepository.findAllOrderById();
             Gson gson = new Gson();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -88,7 +88,7 @@ public class TagController {
             for (String id:delete_ids.split(",")){
                 tagRepository.deleteById(Long.valueOf(id));
             }
-            List<Tags> tagsList = tagRepository.findAll();
+            List<Tags> tagsList = tagRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(tagsList));
         } else {
@@ -106,9 +106,26 @@ public class TagController {
             for (String id:delete_ids.split(",")){
                 tagRepository.updateStatusById(Long.valueOf(id),flag);
             }
-            List<Tags> tagsList = tagRepository.findAll();
+            List<Tags> tagsList = tagRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(tagsList));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
+    }
+
+    @PostMapping("/edit_tag")
+    public void editTag(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            String name = request.getParameter("name");
+            Long id = request.getParameter("id") != null ? Long.valueOf(request.getParameter("id")) : 0;
+            tagRepository.updateNameById(id,name);
+            List<Tags> topicsList = tagRepository.findAllOrderById();
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(topicsList));
         } else {
             response.setContentType("text/html");
             response.getWriter().write("login");
