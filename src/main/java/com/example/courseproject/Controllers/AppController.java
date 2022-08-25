@@ -49,8 +49,8 @@ public class AppController {
                 authentication.setAuthenticated(false);
                 return "login";
             }
-            Date date = new Date();
-            userRepository.updateLastLoginDateById(customUserDetails.getUserId(),formatter.format(date));
+//            Date date = new Date();
+//            userRepository.updateLastLoginDateById(customUserDetails.getUserId(),formatter.format(date));
             return "home";
         }
         return "index";

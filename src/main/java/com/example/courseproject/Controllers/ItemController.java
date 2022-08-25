@@ -197,7 +197,6 @@ public class ItemController {
             response.getWriter().write("login");
         }
     }
-
     @PostMapping("/edit_item")
     public void editItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
@@ -206,6 +205,19 @@ public class ItemController {
             String name = request.getParameter("name");
             Long id = request.getParameter("id") != null ? Long.valueOf(request.getParameter("id")) : 0;
             itemRepository.updateNameById(id,name);
+            List<Items> collectionsList = itemRepository.findAllOrderById();
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(collectionsList));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
+    }
+    @PostMapping("/get_items")
+    public void getItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
             List<Items> collectionsList = itemRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(collectionsList));
