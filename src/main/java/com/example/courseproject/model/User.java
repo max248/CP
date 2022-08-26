@@ -46,6 +46,9 @@ public class User {
     @Column
     private boolean enabled;
 
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
     public String getFullName() {
         return firstName + " " + lastName;
     }
@@ -144,6 +147,14 @@ public class User {
 
     public void setUpdateDate(String updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.courseproject.Controllers;
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.RoleRepository;
 import com.example.courseproject.Repositories.UserRepository;
+import com.example.courseproject.model.Provider;
 import com.example.courseproject.model.Role;
 import com.example.courseproject.model.User;
 import com.google.gson.Gson;
@@ -248,6 +249,7 @@ public class UserController {
         Role role = new Role();
         role = roleRepository.findByRoleName("USER");
         user.setRole(role);
+        user.setProvider(Provider.LOCAL);
         userRepository.save(user);
         return "register_success";
     }
