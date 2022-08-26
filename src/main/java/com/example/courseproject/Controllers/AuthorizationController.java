@@ -40,7 +40,7 @@ public class AuthorizationController {
     public RedirectView loginPage(HttpServletRequest request) throws IOException, NoSuchAlgorithmException, KeyManagementException {
         System.setProperty("com.sun.security.enableAIAcaIssuers", "true");
         String verification_code = request.getParameter("code");
-        String json="grant_type=authorization_code&redirect_uri=http://localhost:8080/oauth2&code=" + verification_code + "&client_id=702841933577-5ngv33h99okvehq0lt35g0k06q636237.apps.googleusercontent.com&client_secret=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";
+        String json="grant_type=authorization_code&redirect_uri=https://intern-cp.herokuapp.com/oauth2&code=" + verification_code + "&client_id=702841933577-5ngv33h99okvehq0lt35g0k06q636237.apps.googleusercontent.com&client_secret=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";
         String responseMessage="";
 
         URL obj = new URL("https://oauth2.googleapis.com/token");
