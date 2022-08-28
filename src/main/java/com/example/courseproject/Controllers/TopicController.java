@@ -3,6 +3,7 @@ package com.example.courseproject.Controllers;
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.TopicRepository;
 import com.example.courseproject.Repositories.UserRepository;
+import com.example.courseproject.Services.FileService;
 import com.example.courseproject.model.Topics;
 import com.example.courseproject.model.User;
 import com.google.gson.Gson;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +31,8 @@ public class TopicController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private FileService fileService;
 
     @GetMapping("/topic_settings")
     public String viewTopicSettingsPage(Authentication authentication, HttpServletRequest request, Model model){
@@ -46,6 +51,8 @@ public class TopicController {
         if(authentication != null && authentication.isAuthenticated()) {
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             String topicName = request.getParameter("topic_name") != null ? request.getParameter("topic_name") : "";
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+            MultipartFile file = multipartRequest != null?multipartRequest.getFile("image"):null;
             if(topicName.length()>0){
                 Topics topic = new Topics();
                 User user = new User();
@@ -53,6 +60,7 @@ public class TopicController {
                 topic.setName(topicName);
                 topic.setStatus(true);
                 topic.setUser(user);
+                topic.setImageUrl(fileService.getFilePath(file));
                 Date date = new Date();
                 topic.setCreateDate(date);
                 if(topicRepository.findByName(topicName) != null && topicRepository.findByName(topicName).getId()>0){
@@ -118,10 +126,18 @@ public class TopicController {
     public void editTopic(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+        MultipartFile imageFile = multipartRequest != null?multipartRequest.getFile("edit_image"):null;
         if(authentication != null && authentication.isAuthenticated()){
-            String name = request.getParameter("name");
+            String name = request.getParameter("edit_name");
             Long id = request.getParameter("id") != null ? Long.valueOf(request.getParameter("id")) : 0;
-            topicRepository.updateNameById(id,name);
+            Topics topics = topicRepository.getById(id);
+            topics.setName(name);
+            topics.setUpdateDate(new Date());
+            if(imageFile != null)
+            topics.setImageUrl(fileService.getFilePath(imageFile));
+            topicRepository.save(topics);
+//            topicRepository.updateNameById(id,name);
             List<Topics> topicsList = topicRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(topicsList));

@@ -193,46 +193,61 @@
   </div>
 </div>
 <div class="modal fade" id="myModel" name="myModel" tabindex="-1" role="dialog" aria-labelledby="myModelLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="myModelLabel">Add a new Topic</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="col-md-12">
-          <input class="form-control" type="text" id="topic_name" placeholder="Enter a Topic name">
+      <form id="saveTopic" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModelLabel">Add a new Topic</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" onclick="addTopic()" class="btn btn-primary" data-dismiss="modal">Save</button>
-      </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="col-md-12">
+              <label for="topic_name">Topic name</label>
+              <input class="form-control" type="text" id="topic_name" name="topic_name" placeholder="Enter a Topic name">
+            </div>
+            <div class="col-md-12">
+              <label for="topic_name">Topic image</label>
+              <input class="form-control" type="file" id="image" name="image" placeholder="Topic image file">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
 <div class="modal fade editModel" id="editModel" name="editModel" tabindex="1" role="dialog" aria-labelledby="editModelLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editModelLabel">Edit Topic</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="col-md-12">
-          <input class="form-control" type="number" id="id" hidden>
-          <input class="form-control" type="text" id="edit_name">
+      <form id="editTopic" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModelLabel">Edit Topic</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="editModel">Close</button>
-        <button type="button" onclick="editTopic()" class="btn btn-primary" data-dismiss="editModel">Save</button>
-      </div>
-
+        <div class="modal-body">
+          <div class="col-md-12">
+            <label for="topic_name">Topic name</label>
+            <input class="form-control" type="number" id="id" name="id" hidden>
+            <input class="form-control" type="text" id="edit_name" name="edit_name">
+          </div>
+          <div class="col-md-12">
+            <label for="topic_name">Topic image</label>
+            <input class="form-control" type="file" id="edit_image" name="edit_image" placeholder="Topic image file">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="editModel">Close</button>
+          <button type="submit"class="btn btn-primary">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -281,23 +296,50 @@
       }
     })
   }
-  function addTopic(){
-    var topicName = $("#topic_name").val();
-    var data = 'topic_name=' + topicName;
+  $("#saveTopic").on("submit", function(e) {
+    console.log("saveTopic");
+    $("#myModel").modal("hide");
+    e.preventDefault();
+    var formData = new FormData(this);
     $.ajax({
-      url: "/add_topic",
-      type: "POST",
-      data: data,
-      success: function (response){
+      type:"POST",
+      url:"add_topic",
+      data:formData,
+      cache:false,
+      dataType:"json",
+      contentType:false,
+      processData:false,
+      success:function(response) {
         appendRows(response);
         showToast('Topic is saved !!!');
       },
       error: function (error){
-        console.log("error: " + JSON.stringify(error));
+        console.log("error: " + error)
       }
-    })
-
-  }
+    });
+  });
+  $("#editTopic").on("submit", function(e) {
+    console.log("editTopic");
+    $("#editModel").modal("hide");
+    e.preventDefault();
+    var formData = new FormData(this);
+    $.ajax({
+      type:"POST",
+      url:"edit_topic",
+      data:formData,
+      cache:false,
+      dataType:"json",
+      contentType:false,
+      processData:false,
+      success:function(response) {
+        appendRows(response);
+        showToast('Topic is saved !!!');
+      },
+      error: function (error){
+        console.log("error: " + error)
+      }
+    });
+  });
   function deleteTopic(id){
     var checkedValues = [];
     $.each($("input[name='checkedIds']:checked"), function(){

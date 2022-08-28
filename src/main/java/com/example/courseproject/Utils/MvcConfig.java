@@ -1,5 +1,6 @@
 package com.example.courseproject.Utils;
 
+import com.cloudinary.Cloudinary;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +13,9 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
@@ -49,5 +52,14 @@ public class MvcConfig implements WebMvcConfigurer {
         localeInterceptor.setParamName("lang");
 
         registry.addInterceptor(localeInterceptor).addPathPatterns("/*");
+    }
+
+    @Bean
+    public Cloudinary cloudinaryConfig() {
+        Map<String, String> config = new HashMap<>();
+        config.put("cloud_name", "interncloud");
+        config.put("api_key", "819835144525214");
+        config.put("api_secret", "HfWaG7uPYy5OgZSvpEWZkRs-1J8");
+        return new Cloudinary(config);
     }
 }
