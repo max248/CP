@@ -2,6 +2,7 @@ package com.example.courseproject.Controllers;
 
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.*;
+import com.example.courseproject.Services.FileService;
 import com.example.courseproject.model.*;
 import com.example.courseproject.model.Collections;
 import com.google.gson.Gson;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +38,8 @@ public class CollectionController {
     @Autowired
     private CollectionColumnRepository collectionColumnRepository;
 
+    @Autowired
+    private FileService fileService;
     @GetMapping("/collection_settings")
     public String viewTopicSettingsPage(Authentication authentication, HttpServletRequest request, Model model){
         CustomUserDetails customUserDetails = authentication != null ? (CustomUserDetails) authentication.getPrincipal() : null;
@@ -56,22 +61,23 @@ public class CollectionController {
         if(authentication != null && authentication.isAuthenticated()) {
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             String collectionName = request.getParameter("collection_name") != null ? request.getParameter("collection_name") : "";
-            String typeIds = request.getParameter("typeIds") != null ? request.getParameter("typeIds") : "";
-            String columnNames = request.getParameter("columnNames") != null ? request.getParameter("columnNames") : "";
             Long topicId = request.getParameter("topicId") != null ? Long.parseLong(request.getParameter("topicId")) : -1;
+            String[] typeIds = request.getParameterMap().get("typeId");
+            String[] columnNames = request.getParameterMap().get("columnName");
             HashMap<Long,String> columnTypeNames = new HashMap<>();
             User user = new User();
             user = userRepository.findByEmail(customUserDetails.getUsername());
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+            MultipartFile imageFile = multipartRequest != null?multipartRequest.getFile("image"):null;
             if(collectionName.length()>0){
                 Collections collections  = new Collections();
                 Topics topic = new Topics();
                 topic = topicRepository.getById(topicId);
-                Date date = new Date();
-
                 collections.setUser(user);
                 collections.setTopics(topic);
                 collections.setName(collectionName);
-                collections.setCreateDate(date);
+                collections.setCreateDate(new Date());
+                collections.setImageUrl(fileService.getFilePath(imageFile));
                 if(collectionRepository.findByName(collectionName) != null && collectionRepository.findByName(collectionName).getId()>0){
                     response.setContentType("text/html");
                     response.setCharacterEncoding("UTF-8");
@@ -80,14 +86,14 @@ public class CollectionController {
                 } else {
                     collections = collectionRepository.save(collections);
                     int i=0;
-                    for (String typeId:typeIds.split(",")) {
+                    for (String id:typeIds) {
                         ColumnType columnType = new ColumnType();
-                        Optional<ColumnType> optinalEntity = columnTypeRepository.findById(Long.valueOf(typeId));
+                        Optional<ColumnType> optinalEntity = columnTypeRepository.findById(Long.valueOf(id));
                         columnType = optinalEntity.get();
                         CollectionColumns collectionColumns = new CollectionColumns();
                         collectionColumns.setCollection(collections);
                         collectionColumns.setColumnType(columnType);
-                        collectionColumns.setName(columnNames.split(",")[i]);
+                        collectionColumns.setName(columnNames[i]);
                         collectionColumnRepository.save(collectionColumns);
                         i++;
                     }
@@ -166,13 +172,20 @@ public class CollectionController {
     }
 
     @PostMapping("/edit_collection")
-    public void editTopic(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void editCollection(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         if(authentication != null && authentication.isAuthenticated()){
-            String name = request.getParameter("name");
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+            MultipartFile imageFile = multipartRequest != null?multipartRequest.getFile("edit_image"):null;
+            String name = request.getParameter("edit_name");
             Long id = request.getParameter("id") != null ? Long.valueOf(request.getParameter("id")) : 0;
-            collectionRepository.updateNameById(id,name);
+            Optional<Collections> optinalEntity = collectionRepository.findById(id);
+            Collections collections = optinalEntity.get();
+            collections.setName(name);
+            collections.setImageUrl(fileService.getFilePath(imageFile));
+            collections.setUpdateDate(new Date());
+            collectionRepository.save(collections);
             List<Collections> collectionsList = collectionRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(collectionsList));

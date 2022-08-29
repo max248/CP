@@ -135,7 +135,7 @@
                           <th style="width: 25%;">Name</th>
                           <th style="width: 20%;">Topic</th>
                           <th style="width: 25%;">Author</th>
-                          <th style="width: 10%;">Status</th>
+                          <th style="width: 8%;">Status</th>
                           <th style="width: 15%;">Action</th>
                         </tr>
                         </thead>
@@ -183,55 +183,68 @@
 <div class="modal fade" id="myModel" name="myModel" tabindex="-1" role="dialog" aria-labelledby="myModelLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content custom">
-      <div class="modal-header">
-        <h5 class="modal-title" id="myModelLabel">Add a new Topic</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label" for="topicId">Receiver</label>
-          <select class="form-control selectpicker" id="topicId" name="topicId" data-live-search="true" required>
-            <option th:each="topic : ${listTopics}" th:value="${topic.id}" th:text="${topic.name}"> </option>
-          </select>
+      <form id="saveCollection" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModelLabel">Add a new Topic</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-        <div class="form-group col-md-12">
-          <input class="form-control" type="text" id="topic_name" placeholder="Enter a Collection name">
-        </div>
-        <div>
-          <button class="btn btn-primary add_field_button">Add Columns</button>
-          <div class="input_fields_wrap" id="input_fields_wrap">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="topicId">Select Topic</label>
+            <select class="form-control selectpicker" id="topicId" name="topicId" data-live-search="true" required>
+              <option th:each="topic : ${listTopics}" th:value="${topic.id}" th:text="${topic.name}"> </option>
+            </select>
+          </div>
+          <div class="form-group col-md-12">
+            <label for="collection_name">Collection name</label>
+            <input class="form-control" type="text" name="collection_name" id="collection_name" placeholder="Enter a Collection name">
+          </div>
+          <div class="col-md-12">
+            <label for="image">Collection image</label>
+            <input class="form-control" type="file" id="image" name="image" placeholder="Topic image file">
+          </div>
+          <div>
+            <button class="btn btn-primary add_field_button">Add Columns</button>
+            <div class="input_fields_wrap" id="input_fields_wrap">
+            </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" onclick="addCollection()" class="btn btn-primary" data-dismiss="modal">Save</button>
-      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
 <div class="modal fade editModel" id="editModel" name="editModel" tabindex="1" role="dialog" aria-labelledby="editModelLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editModelLabel">Edit Topic</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="col-md-12">
-          <input class="form-control" type="number" id="id" hidden>
-          <input class="form-control" type="text" id="edit_name">
+      <form id="editCollection" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModelLabel">Edit Topic</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" onclick="editCollection()" class="btn btn-primary" data-dismiss="editModel">Save</button>
-      </div>
-
+        <div class="modal-body">
+          <div class="col-md-12">
+            <input class="form-control" type="number" id="id" name="id" hidden>
+            <label for="collection_name">Collection name</label>
+            <input class="form-control" type="text" name="edit_name" id="edit_name" placeholder="Enter a Collection name">
+          </div>
+          <div class="col-md-12">
+            <label for="image">Collection image</label>
+            <input class="form-control" type="file" id="edit_image" name="edit_image" placeholder="Topic image file">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" data-dismiss="editModel">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -266,7 +279,7 @@
                 '<label class="form-label" for="topicId">Name</label>' +
                 '</div>' +
                 '<div class="col-4">' +
-                '<input placeholder="Column Name" type="text" name="columnName" id="columnName" class="form-control">' +
+                '<input placeholder="Column Name" type="text" name="columnName" class="form-control">' +
                 '</div>' +
                 '<div class="col-2">' +
                 '<button class="btn btn-outline-danger remove_field" type="button">Remove</button>' +
@@ -276,7 +289,6 @@
       }
       x++; //text box increment
     });
-
     $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
       e.preventDefault(); $(this).parent('div').parent('div').remove(); x--;
     })
@@ -297,7 +309,6 @@
     }
   });
   function showEditModal(id,name){
-    console.log("name:" + name);
     $('#id').val(id);
     $('#edit_name').val(name);
     $("#editModel").modal("show");
@@ -305,72 +316,48 @@
   function clearDiv(){
    $("#input_fields_wrap").empty();
  }
-  function editCollection(){
-    var data = 'id=' + $('#id').val() + "&name=" + $('#edit_name').val();
+  $("#saveCollection").on("submit", function(e) {
+    $("#myModel").modal("hide");
+    e.preventDefault();
+    var formData = new FormData(this);
     $.ajax({
-      url:"/edit_collection",
-      type: "POST",
-      data: data,
-      success: function (response){
-        if(response == 'login'){
-          window.location.href = "/login";
-        } else {
-          $("#editModel").modal("hide");
-          appendRows(response);
-          showToast('Topic status is updated !!!');
-        }
+      type:"POST",
+      url:"add_collection",
+      data:formData,
+      cache:false,
+      dataType:"json",
+      contentType:false,
+      processData:false,
+      success:function(response) {
+        appendRows(response);
+        showToast('Collection is saved !!!');
       },
       error: function (error){
-        console.log("error: " + JSON.stringify(error));
+        console.log("error: " + error)
       }
-    })
-  }
-  function addCollection(){
-    var myModal = new bootstrap.Modal(document.getElementById("myModel"), {});
-    myModal.hide();
-    var topicId = $("#topicId").val();
-    var topicName = $("#topic_name").val();
-    var typeId = document.getElementsByName("typeId");
-    var columnName = document.getElementsByName("columnName");
-    var typeIds = [];
-    var columnNames = [];
-    var i=0;
-    [].forEach.call(typeId, function(ele) {
-      typeIds[i] = ele.value;
-      i++;
     });
-    i=0;
-    [].forEach.call(columnName, function(ele) {
-      columnNames[i] = ele.value;
-      i++;
-    });
-    var data = 'collection_name=' + topicName + '&topicId='+ topicId + '&typeIds=' + typeIds + '&columnNames=' + columnNames;
+  });
+  $("#editCollection").on("submit", function(e) {
+    $("#editModel").modal("hide");
+    e.preventDefault();
+    var formData = new FormData(this);
     $.ajax({
-      url: "/add_collection",
-      type: "POST",
-      data: data,
-      success: function (response){
-        if(response == 'exist'){
-          new Toast({
-            title: 'Message',
-            text: 'Collection is already exists !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
-        } else {
-          appendRows(response);
-          showToast('Collection is saved !!!');
-          $("#input_fields_wrap").empty();
-        }
-
+      type:"POST",
+      url:"edit_collection",
+      data:formData,
+      cache:false,
+      dataType:"json",
+      contentType:false,
+      processData:false,
+      success:function(response) {
+        appendRows(response);
+        showToast('Collection status is updated !!!');
       },
       error: function (error){
-        console.log("error: " + JSON.stringify(error));
+        console.log("error: " + error)
       }
-    })
-
-  }
+    });
+  });
   function deleteCollection(id){
     var checkedValues = [];
     $.each($("input[name='checkedIds']:checked"), function(){
@@ -465,7 +452,6 @@
               '</tr>');
     }
   }
-
   function showToast(msg){
     new Toast({
       title: 'Message',

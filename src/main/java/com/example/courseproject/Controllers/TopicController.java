@@ -137,7 +137,6 @@ public class TopicController {
             if(imageFile != null)
             topics.setImageUrl(fileService.getFilePath(imageFile));
             topicRepository.save(topics);
-//            topicRepository.updateNameById(id,name);
             List<Topics> topicsList = topicRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(topicsList));
