@@ -185,65 +185,76 @@
 <div class="modal fade" id="myModel" name="myModel" tabindex="-1" role="dialog" aria-labelledby="myModelLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content custom">
-      <div class="modal-header">
-        <h5 class="modal-title" id="myModelLabel">Add a new Topic</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label" for="collectionId">Collections</label>
-          <select class="form-control selectpicker" id="collectionId" name="collectionId" data-live-search="true" onchange="getCollectionColumns(this)" required>
-            <option value="-1" text="Select collection"> </option>
-            <option th:each="collection : ${listCollections}" th:value="${collection.id}" th:text="${collection.name}"> </option>
-          </select>
+      <form id="saveItem" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModelLabel">Add a new Topic</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-        <div class="form-group col-md-12">
-          <label class="form-label" for="item_name">Item Name</label>
-          <input class="form-control" type="text" id="item_name" placeholder="Enter a Item name">
-        </div>
-        <div class="form-group col-md-12">
-          <label class="form-label" for="input_fields_wrap">Columns fields</label>
-          <div class="input_fields_wrap" id="input_fields_wrap">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="collectionId">Collections</label>
+            <select class="form-control selectpicker" id="collectionId" name="collectionId" data-live-search="true" onchange="getCollectionColumns(this)" required>
+              <option value="-1" text="Select collection"> </option>
+              <option th:each="collection : ${listCollections}" th:value="${collection.id}" th:text="${collection.name}"> </option>
+            </select>
           </div>
-        </div>
-        <div class="form-group col-md-12">
-          <label class="form-label" for="tags">Tags</label>
-          <select class="form-select" id="tags" multiple data-allow-new="true" data-clear-label="Clear">
-            <option th:each="tag : ${listTags}" th:value="${tag.id}" th:text="${tag.name}"> </option>
-          </select>
-          <div class="invalid-feedback">Please select a valid tag.</div>
-        </div>
+          <div class="form-group col-md-12">
+            <label class="form-label" for="item_name">Item Name</label>
+            <input class="form-control" type="text" id="item_name" name="item_name" placeholder="Enter a Item name">
+          </div>
+          <div class="col-md-12">
+            <label for="image">Item image</label>
+            <input class="form-control" type="file" id="image" name="image" placeholder="Topic image file">
+          </div>
+          <div class="form-group col-md-12">
+            <label class="form-label" for="input_fields_wrap">Columns fields</label>
+            <div class="input_fields_wrap" id="input_fields_wrap">
+            </div>
+          </div>
+          <div class="form-group col-md-12">
+            <label class="form-label" for="tags">Tags</label>
+            <select class="form-select" id="tags" multiple data-allow-new="true" data-clear-label="Clear">
+              <option th:each="tag : ${listTags}" th:value="${tag.id}" th:text="${tag.name}"> </option>
+            </select>
+            <div class="invalid-feedback">Please select a valid tag.</div>
+          </div>
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" onclick="addItem()" class="btn btn-primary" data-dismiss="modal">Save</button>
-      </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
 <div class="modal fade editModel" id="editModel" name="editModel" tabindex="1" role="dialog" aria-labelledby="editModelLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editModelLabel">Edit Topic</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="col-md-12">
-          <input class="form-control" type="number" id="id" hidden>
-          <input class="form-control" type="text" id="edit_name">
+      <form id="editItem" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModelLabel">Edit Topic</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" onclick="editItem()" class="btn btn-primary" data-dismiss="editModel">Save</button>
-      </div>
-
+        <div class="modal-body">
+          <div class="col-md-12">
+            <input class="form-control" type="number" id="id" name="id" hidden>
+            <input class="form-control" type="text" id="edit_name" name="edit_name">
+          </div>
+          <div class="col-md-12">
+            <label for="image">Item image</label>
+            <input class="form-control" type="file" id="edit_image" name="edit_image" placeholder="Edit image file">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -271,7 +282,6 @@
   function clearDiv(){
     $("#input_fields_wrap").empty();
   }
-
   function showEditModal(id,name){
     console.log("name:" + name);
     $('#id').val(id);
@@ -297,6 +307,7 @@
           $(wrapper).append('' +
                   '<div class="col-4">' +
                   '<label class="form-label" for="columnName" name="collectionColumnName" id="collectionColumnName">' + response[i].name + '</label>' +
+                  '<input type="number" name="collectionColumnId" hidden value="' + response[i].id + '">' +
                   '<input type="' + response[i].columnType.type + '" name="collectionColumn" id="collectionColumn" class="form-control collectionColumn">' +
                   '</div>');
 
@@ -307,73 +318,50 @@
       }
     })
   }
-  function addItem(){
-    var myModal = new bootstrap.Modal(document.getElementById("myModel"), {});
-    myModal.hide();
-    var collectionId = $("#collectionId").val();
-    var itemName = $("#item_name").val();
-    var i=0;
-    var array = $("input[name='collectionColumn']").map(function() {
-      return {
-        label: $(this).prevAll('label:first').text(),
-        val: $(this).val()
-      };
-    }).get();
-
-    console.log("tags:" + $("#tags").val())
-
-
-    console.log("array: "+ JSON.stringify(array));
-
-    var data = 'itemName=' + itemName + '&collectionId='+ collectionId +
-            '&collectionColumnValues=' + JSON.stringify(array) +
-            '&tags='+$("#tags").val();
+  $("#saveItem").on("submit", function(e) {
+    $("#myModel").modal("hide");
+    e.preventDefault();
+    var formData = new FormData(this);
     $.ajax({
-      url: "/add_item",
-      type: "POST",
-      data: data,
-      success: function (response){
-        if(response == 'exist'){
-          new Toast({
-            title: 'Message',
-            text: 'Collection is already exists !!!',
-            theme: 'light',
-            autohide: true,
-            interval: 10000
-          });
-        } else {
-          appendRows(response);
-        }
-
+      type:"POST",
+      url:"add_item",
+      data:formData,
+      cache:false,
+      dataType:"json",
+      contentType:false,
+      processData:false,
+      success:function(response) {
+        appendRows(response);
+        showToast('Item is saved !!!');
+        clearDiv
       },
       error: function (error){
-        console.log("error: " + JSON.stringify(error));
+        console.log("error: " + error)
       }
-    })
-
-  }
-  function editItem(){
-    console.log("editItem");
-    var data = 'id=' + $('#id').val() + "&name=" + escape($('#edit_name').val());
-    console.log("editItem: " + data);
+    });
+  });
+  $("#editItem").on("submit", function(e) {
+    $("#editModel").modal("hide");
+    e.preventDefault();
+    var formData = new FormData(this);
     $.ajax({
-      url:"/edit_item",
-      type: "POST",
-      data: data,
-      success: function (response){
-        if(response == 'login'){
-          window.location.href = "/login";
-        } else {
-          $("#editModel").modal("hide");
-          appendRows(response);
-          showToast('Topic status is updated !!!');
-        }
+      type:"POST",
+      url:"edit_item",
+      data:formData,
+      cache:false,
+      dataType:"json",
+      contentType:false,
+      processData:false,
+      success:function(response) {
+        appendRows(response);
+        showToast('Collection status is updated !!!');
+        clearDiv
       },
       error: function (error){
-        console.log("error: " + JSON.stringify(error));
+        console.log("error: " + error)
       }
-    })
-  }
+    });
+  });
   function deleteItem(id){
     var checkedValues = [];
     $.each($("input[name='checkedIds']:checked"), function(){
@@ -454,7 +442,6 @@
               '</tr>');
     }
   }
-
   function showToast(msg){
     new Toast({
       title: 'Message',

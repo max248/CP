@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Items,Long> {
     @Query("SELECT i FROM Items i where i.name = ?1 and i.user.id = ?2")
-    Topics findByName(String name, Long userId);
+    Items findByName(String name, Long userId);
 
     @Query("SELECT i FROM Items i order by i.id")
     List<Items> findAllOrderById();

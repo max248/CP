@@ -34,6 +34,9 @@ public class Items {
     @Column
     private boolean status;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     public Long getId() {
         return id;
     }
@@ -88,5 +91,13 @@ public class Items {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

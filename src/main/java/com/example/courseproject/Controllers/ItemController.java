@@ -2,6 +2,7 @@ package com.example.courseproject.Controllers;
 
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.*;
+import com.example.courseproject.Services.FileService;
 import com.example.courseproject.model.*;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +46,8 @@ public class ItemController {
 
     @Autowired
     private ItemTagsRepository itemTagsRepository;
-
+    @Autowired
+    private FileService fileService;
     @GetMapping("/item_settings")
     public String viewItemSettingsPage(Authentication authentication, HttpServletRequest request, Model model){
         CustomUserDetails customUserDetails = authentication != null ? (CustomUserDetails) authentication.getPrincipal() : null;
@@ -61,21 +65,21 @@ public class ItemController {
     }
 
     @PostMapping("/add_item")
-    public void addTopic(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void addItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if(authentication != null && authentication.isAuthenticated()) {
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = new User();
             user = userRepository.findByEmail(customUserDetails.getUsername());
-            String itemName = request.getParameter("itemName") != null ? request.getParameter("itemName") : "";
-            String collectionId = request.getParameter("collectionId") != null ? request.getParameter("collectionId") : "";
-            String collectionColumnValues = request.getParameter("collectionColumnValues") != null ? request.getParameter("collectionColumnValues") : "";
+            String itemName = request.getParameter("item_name") != null ? request.getParameter("item_name") : "";
+            String[] collectionId = request.getParameterMap().get("collectionId");
+            String[] collectionColumnValues = request.getParameterMap().get("collectionColumn");
+            String[] collectionColumnValueIds = request.getParameterMap().get("collectionColumnId");
             String tags = request.getParameter("tags") != null ? request.getParameter("tags") : "";
             Gson gson = new Gson();
-            JsonModel[] jsonModel = gson.fromJson(collectionColumnValues.toString(),JsonModel[].class);
-
-
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+            MultipartFile imageFile = multipartRequest != null?multipartRequest.getFile("image"):null;
             if(itemName.length()>0){
-                Optional<Collections> optionalCollections = collectionRepository.findById(Long.valueOf(collectionId));
+                Optional<Collections> optionalCollections = collectionRepository.findById(Long.valueOf(collectionId[0]));
                 Collections collections = optionalCollections.get();
                 Items items = new Items();
                 items.setCollection(collections);
@@ -83,6 +87,7 @@ public class ItemController {
                 items.setUser(user);
                 items.setStatus(true);
                 items.setName(itemName);
+                items.setImageUrl(fileService.getFilePath(imageFile));
                 if(itemRepository.findByName(itemName, user.getId()) != null && itemRepository.findByName(itemName, user.getId()).getId()>0){
                     response.setContentType("text/html");
                     response.setCharacterEncoding("UTF-8");
@@ -90,15 +95,13 @@ public class ItemController {
                     return;
                 } else {
                     items = itemRepository.save(items);
-                    for(int i=0;i<jsonModel.length;i++){
-                        List<CollectionColumns> collectionColumns = collectionColumnRepository.findByNameCollection(collections.getId(),jsonModel[i].getLabel());
-                        if(collectionColumns.size()>0){
-                            ItemData itemData = new ItemData();
-                            itemData.setItem(items);
-                            itemData.setCollectionColumns(collectionColumns.get(0));
-                            itemData.setData(jsonModel[i].getVal());
-                            itemDataRepository.save(itemData);
-                        }
+                    for (int i=0;i<collectionColumnValueIds.length;i++){
+                        Optional<CollectionColumns> optionalCollectionColumns = collectionColumnRepository.findById(Long.valueOf(collectionColumnValueIds[i]));
+                        ItemData itemData = new ItemData();
+                        itemData.setItem(items);
+                        itemData.setCollectionColumns(optionalCollectionColumns.get());
+                        itemData.setData(collectionColumnValues[i]);
+                        itemDataRepository.save(itemData);
                     }
 
                     for (String tag: tags.split(",")) {
@@ -202,9 +205,17 @@ public class ItemController {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         if(authentication != null && authentication.isAuthenticated()){
-            String name = request.getParameter("name");
+            String name = request.getParameter("edit_name");
             Long id = request.getParameter("id") != null ? Long.valueOf(request.getParameter("id")) : 0;
-            itemRepository.updateNameById(id,name);
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+            MultipartFile imageFile = multipartRequest != null?multipartRequest.getFile("edit_image"):null;
+            Optional<Items> optionalItems = itemRepository.findById(id);
+            Items items = optionalItems.get();
+            items.setName(name);
+            if(imageFile.getSize()>0)
+            items.setImageUrl(fileService.getFilePath(imageFile));
+            items.setUpdateDate(new Date());
+            itemRepository.save(items);
             List<Items> collectionsList = itemRepository.findAllOrderById();
             Gson gson = new Gson();
             response.getWriter().write(gson.toJson(collectionsList));

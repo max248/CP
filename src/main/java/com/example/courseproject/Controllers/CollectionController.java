@@ -183,6 +183,7 @@ public class CollectionController {
             Optional<Collections> optinalEntity = collectionRepository.findById(id);
             Collections collections = optinalEntity.get();
             collections.setName(name);
+            if(imageFile.getSize()>0)
             collections.setImageUrl(fileService.getFilePath(imageFile));
             collections.setUpdateDate(new Date());
             collectionRepository.save(collections);
