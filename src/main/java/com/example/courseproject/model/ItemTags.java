@@ -1,5 +1,8 @@
 package com.example.courseproject.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -12,10 +15,12 @@ public class ItemTags {
 
     @ManyToOne
     @JoinColumn(name = "item_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Items items;
 
     @ManyToOne
     @JoinColumn(name = "tag_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Tags tags;
 
     @Column(name = "create_date", nullable = false, length = 64)

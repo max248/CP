@@ -1,5 +1,8 @@
 package com.example.courseproject.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -14,10 +17,12 @@ public class Items {
     private String name;
     @ManyToOne
     @JoinColumn(name = "collection_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Collections collection;
 
     @ManyToOne
     @JoinColumn(name = "create_user_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Column(name = "create_date", nullable = false, length = 64)

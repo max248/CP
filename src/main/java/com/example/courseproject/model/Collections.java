@@ -1,5 +1,8 @@
 package com.example.courseproject.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -16,10 +19,12 @@ public class Collections {
 
     @ManyToOne
     @JoinColumn(name = "create_user_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "topic_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Topics topics;
 
     @Column
@@ -37,7 +42,8 @@ public class Collections {
     @Column
     private boolean status;
 
-
+    @Column(name = "image_url")
+    private String imageUrl;
     public Long getId() {
         return id;
     }
@@ -108,5 +114,13 @@ public class Collections {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

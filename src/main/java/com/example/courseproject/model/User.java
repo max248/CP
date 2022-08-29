@@ -1,5 +1,8 @@
 package com.example.courseproject.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +17,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name="role_id", nullable=false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Role role;
 
     @Column(nullable = false, unique = true, length = 45)

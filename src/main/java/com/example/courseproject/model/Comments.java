@@ -1,5 +1,8 @@
 package com.example.courseproject.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -12,10 +15,12 @@ public class Comments {
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "item_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Items item;
 
     @Column

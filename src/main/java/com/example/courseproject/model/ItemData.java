@@ -1,5 +1,8 @@
 package com.example.courseproject.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,10 +14,12 @@ public class ItemData {
 
     @ManyToOne
     @JoinColumn(name = "collection_column_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CollectionColumns collectionColumns;
 
     @ManyToOne
     @JoinColumn(name = "item_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Items item;
 
     @Column
