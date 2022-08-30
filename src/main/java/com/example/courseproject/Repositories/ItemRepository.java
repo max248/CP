@@ -1,15 +1,20 @@
 package com.example.courseproject.Repositories;
 
+import com.example.courseproject.Projections.ItemProjection;
 import com.example.courseproject.model.Collections;
 import com.example.courseproject.model.Items;
 import com.example.courseproject.model.Topics;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
+@Repository
 public interface ItemRepository extends JpaRepository<Items,Long> {
     @Query("SELECT i FROM Items i where i.name = ?1 and i.user.id = ?2")
     Items findByName(String name, Long userId);
@@ -30,5 +35,24 @@ public interface ItemRepository extends JpaRepository<Items,Long> {
     @Transactional
     void updateNameById(Long id, String name);
 
+    @Query(nativeQuery = true, value = "select CAST(json_agg(tt.*) as text) as json from(\n" +
+            "select t.id,json_agg(t.*) as json\n" +
+            "from \n" +
+            "(select i.id, i.name, i.image_url," +
+            "(select name from collections where id = i.collection_id) as collection_name," +
+            "(select count(*) from comments where item_id = i.id) as comment_count,\n" +
+            "json_build_object('columns',\n" +
+            "(select json_agg(m.*) from (select cc.name,itd.data from item_data  itd\n" +
+            "left join collection_columns cc on cc.id = itd.collection_column_id\n" +
+            "where itd.item_id = i.id)m), 'tags',(select json_agg(m.*) from \n" +
+            "(select t.name\n" +
+            "from tags  t\n" +
+            "left join item_tags it on it.tag_id = t.id\n" +
+            "where it.item_id = i.id)m\n" +
+            ")) as json \n" +
+            "\n" +
+            "from items i where i.create_user_id =1 group by i.id order by i.id\n" +
+            ")t group by t.id) tt")
+    List<ItemProjection> getItemJsonDataByUserId(Long userId);
 
 }

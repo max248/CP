@@ -5,6 +5,8 @@
     <title>Itransition - Course work</title>
     <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgpEB0pwwB8BKgqs5msjHFdboMiy8LCFKKlQ&usqp=CAU">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/cards.css">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -29,7 +31,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h2>Trending <b>Products</b></h2>
+            <h2>Last <b>Items</b></h2>
             <!--                data-interval="3000"-->
             <div id="myCarousel" class="carousel slide z-depth-1-half" data-ride="carousel">
                 <!-- Carousel indicators -->
@@ -39,7 +41,11 @@
                     <li data-target="#myCarousel" data-slide-to="2"></li>
                 </ol>
                 <!-- Wrapper for carousel items -->
-                <div class="carousel-inner" id="myItemCarousel">
+                <div class="carousel-inner" >
+                    <div class="container mydiv">
+                        <div class="row" id="myItemCarousel">
+                        </div>
+                    </div>
                 </div>
                 <!-- Carousel controls -->
                 <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
@@ -61,40 +67,106 @@
            type: "POST",
            data: '',
            success: function (response){
+               console.log("response: " + JSON.stringify(response));
                var divTxt = ''
                var rowTxt = ''
+               var endFlag = 0;
                for (var i=0;i<response.length; i++){
+                   endFlag = 0;
+                   var colDiv = '';
+                   if(response[i].json[0].json.columns != null)
+                       response[i].json[0].json.columns.forEach(function(col){
+                           colDiv +=
+                           '<div class="bbb_deals_info_line d-flex flex-row justify-content-start">' +
+                           '<div class="bbb_deals_item_name">' + col.name + '</div>' +
+                           '<div class="bbb_deals_item_price ml-auto">' + col.data + '</div>' +
+                           '</div>';
+                       });
+
                    rowTxt +=
-                       ' <div class="col-sm-3">' +
-                       '<div class="thumb-wrapper">' +
-                       '<div class="img-box">' +
-                       '<img src="https://www.tutorialrepublic.com/examples/images/products/ipad.jpg" class="img-fluid" alt="">' +
-                       '</div>' +
-                       '<div class="thumb-content">' +
-                       '<h4>' + response[i].name + '</h4>' +
-                       '<p class="item-price"><strike>$350.00</strike> <span>$330.00</span></p>' +
-                       '<div class="star-rating">' +
-                       '<ul class="list-inline">' +
-                       '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                       '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                       '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                       '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                       '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>' +
-                       '</ul>' +
-                       '</div>' +
-                       '<a href="#" class="btn btn-primary">Details</a>' +
-                       '</div>' +
-                       '</div>' +
+                       '<div class="col-md-4">' +
+                           '<div class="bbb_deals">' +
+                               '<div class="ribbon ribbon-top-right"><span><small class="cross">x</small>0</span></div>' +
+                               '<div class="bbb_deals_title">' + response[i].json[0].name + '</div>' +
+                                   '<div class="bbb_deals_slider_container">' +
+                                       '<div class=" bbb_deals_item">' +
+                                            '<div class="bbb_deals_image"><img style="height: 180px; width: 250px;" src="'+  response[i].json[0].image_url + '" alt=""></div>' +
+                                            '<div class="bbb_deals_content">' +
+                                                '<div class="bbb_deals_info_line d-flex flex-row justify-content-start">' +
+                                                     '<div class="bbb_deals_item_category"><a href="#">' + response[i].json[0].collection_name + '</a></div>' +
+                                                     '<div class="bbb_deals_item_price_a ml-auto"><strike>₹30,000</strike></div>' +
+                                                '</div>' +
+                                                '<div style="overflow-x: auto; overflow-y: scroll; height: 100px" ">' +
+                                                   colDiv +
+                                                '</div>' +
+                                                '<div class="available">' +
+                                                     '<div class="available_line d-flex flex-row justify-content-start">' +
+                                                          '<div class="available_title">Comments: <span>' + response[i].json[0].comment_count  + '</span></div>' +
+                                                          '<div class="sold_stars ml-auto"> ' +
+                                                               '<i class="fa fa-star"></i> ' +
+                                                               '<i class="fa fa-star"></i> <i class="fa fa-star"></i> ' +
+                                                               '<i class="fa fa-star"></i> <i class="fa fa-star"></i> ' +
+                                                          '</div>' +
+                                                     '</div>' +
+                                                     '<div class="available_bar"><span style="width:17%"></span></div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                       '</div>' +
+                                   '</div>' +
+                               '</div>' +
                        '</div>';
-                   if(i % 4 == 0 ){
+
+                   // ' <div class="col-sm-3">' +
+                   //     '<div class="thumb-wrapper">' +
+                   //     '<div class="img-box">' +
+                   //     '<img style="height: 150px; width: 200px;" src="' + response[i].json[0].image_url + '" class="img-fluid" alt="">' +
+                   //     '</div>' +
+                   //     '<div class="thumb-content">' +
+                   //     '<h6>' + response[i].json[0].name + '</h6>';
+                   // if(response[i].json[0].json.columns != null)
+                   //     response[i].json[0].json.columns.forEach(function(col){
+                   //         rowTxt += '<p class="item-price"> ' + col.name + ': <span>' + col.data + '</span></p>';
+                   //     });
+                   //
+                   //    if(response[i].json[0].json.tags != null)
+                   //    response[i].json[0].json.tags.forEach(function(tag){
+                   //        rowTxt += '<p class="item-price"> <span>' + tag.name + '</span></p>';
+                   //     });
+                   //     rowTxt +=
+                   //     '<div class="star-rating">' +
+                   //     '<ul class="list-inline">' +
+                   //     '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
+                   //     '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
+                   //     '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
+                   //     '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
+                   //     '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>' +
+                   //     '</ul>' +
+                   //     '</div>' +
+                   //     '<a href="#" class="btn btn-primary">Details</a>' +
+                   //     '</div>' +
+                   //     '</div>' +
+                   //     '</div>';
+
+                   if(i % 4 == 0 && i > 0){
+                       console.log("if ga kirdi");
                        divTxt = (i == 0)?'<div class="carousel-item active">' : '<div class="carousel-item">';
                        divTxt += '<div class="row">' + rowTxt + '</div></div>';
                        $('#myItemCarousel').append(divTxt);
                        divTxt='';
                        rowTxt='';
+                       endFlag = 1;
                    }
-
-
+               }
+               console.log("0 if ga kirdi: " + endFlag);
+               if(endFlag == 0){
+                   console.log("1 if ga kirdi");
+                   divTxt = '<div class="carousel-item active">';
+                   divTxt += '<div class="row">' + rowTxt + '</div></div>';
+                   console.log("rowTxt: " + rowTxt);
+                   console.log("divTxt: " + divTxt);
+                   $('#myItemCarousel').append(rowTxt);
+                   divTxt='';
+                   rowTxt='';
                }
            },
             error: function (error){
@@ -104,6 +176,9 @@
     });
 </script>
 <style>
+    .recent-articles-list {
+        max-height: 30rem;
+    }
     body {
         font-family: "Open Sans", sans-serif;
     }

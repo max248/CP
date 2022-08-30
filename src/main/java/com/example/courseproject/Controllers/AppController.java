@@ -1,8 +1,11 @@
 package com.example.courseproject.Controllers;
 
+import com.example.courseproject.Projections.ItemProjection;
+import com.example.courseproject.Repositories.ItemRepository;
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.RoleRepository;
 import com.example.courseproject.Repositories.UserRepository;
+import com.example.courseproject.model.Items;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,8 @@ public class AppController {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private ItemRepository itemRepository;
 
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -42,15 +47,17 @@ public class AppController {
     }
 
     @GetMapping("")
-    public String viewHomePage(Authentication authentication){
+    public String viewHomePage(Authentication authentication, HttpServletRequest request){
         if(authentication != null && authentication.isAuthenticated()){
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             if(!(userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
                 authentication.setAuthenticated(false);
                 return "login";
             }
-//            Date date = new Date();
-//            userRepository.updateLastLoginDateById(customUserDetails.getUserId(),formatter.format(date));
+            List<Items> listItems = itemRepository.findAllOrderById();
+            List<ItemProjection> projectionList = itemRepository.getItemJsonDataByUserId(customUserDetails.getUserId());
+            request.setAttribute("listItems",listItems);
+            request.setAttribute("projectionList",projectionList);
             return "home";
         }
         return "index";

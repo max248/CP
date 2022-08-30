@@ -1,5 +1,6 @@
 package com.example.courseproject.Controllers;
 
+import com.example.courseproject.Projections.ItemProjection;
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.*;
 import com.example.courseproject.Services.FileService;
@@ -225,13 +226,13 @@ public class ItemController {
         }
     }
     @PostMapping("/get_items")
-    public void getItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getItem(Authentication authentication, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         if(authentication != null && authentication.isAuthenticated()){
-            List<Items> collectionsList = itemRepository.findAllOrderById();
-            Gson gson = new Gson();
-            response.getWriter().write(gson.toJson(collectionsList));
+            List<ItemProjection> projectionList = itemRepository.getItemJsonDataByUserId(customUserDetails.getUserId());
+            response.getWriter().write(projectionList.get(0).getJson());
         } else {
             response.setContentType("text/html");
             response.getWriter().write("login");
