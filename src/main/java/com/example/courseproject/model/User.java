@@ -53,6 +53,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
+    @Enumerated(EnumType.STRING)
+    private Language language;
+
     public String getFullName() {
         return firstName + " " + lastName;
     }
@@ -159,6 +162,14 @@ public class User {
 
     public void setProvider(Provider provider) {
         this.provider = provider;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 
     @Override

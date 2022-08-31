@@ -3,6 +3,7 @@ package com.example.courseproject.Controllers;
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.RoleRepository;
 import com.example.courseproject.Repositories.UserRepository;
+import com.example.courseproject.model.Language;
 import com.example.courseproject.model.Provider;
 import com.example.courseproject.model.Role;
 import com.example.courseproject.model.User;
@@ -250,6 +251,7 @@ public class UserController {
         role = roleRepository.findByRoleName("USER");
         user.setRole(role);
         user.setProvider(Provider.LOCAL);
+        user.setLanguage(Language.en);
         userRepository.save(user);
         return "register_success";
     }

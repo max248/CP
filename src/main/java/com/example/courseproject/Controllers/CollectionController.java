@@ -195,4 +195,18 @@ public class CollectionController {
             response.getWriter().write("login");
         }
     }
+
+    @PostMapping("/get_collection")
+    public void getItem(Authentication authentication, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        if(authentication != null && authentication.isAuthenticated()){
+            String projectionList = collectionRepository.getCollectionJsonDataByUserId(customUserDetails.getUserId());
+            response.getWriter().write(projectionList);
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
+    }
 }

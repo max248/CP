@@ -1,5 +1,6 @@
 package com.example.courseproject.Services;
 
+import com.example.courseproject.model.Language;
 import com.example.courseproject.model.Role;
 import com.example.courseproject.model.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,6 +35,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getFullName(){
         return user.getFirstName()  + " " + user.getLastName();
+    }
+
+    public Language getLanguage(){
+        return user.getLanguage();
     }
 
     public Long getUserId(){

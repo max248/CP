@@ -232,8 +232,8 @@ public class ItemController {
         response.setCharacterEncoding("UTF-8");
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         if(authentication != null && authentication.isAuthenticated()){
-            List<ItemProjection> projectionList = itemRepository.getItemJsonDataByUserId(customUserDetails.getUserId());
-            response.getWriter().write(projectionList.get(0).getJson());
+            String projectionList = itemRepository.getItemJsonDataByUserId(customUserDetails.getUserId());
+            response.getWriter().write(projectionList);
         } else {
             response.setContentType("text/html");
             response.getWriter().write("login");

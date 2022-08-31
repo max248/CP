@@ -28,4 +28,12 @@ public interface CollectionRepository extends JpaRepository<Collections, Long> {
     @Query("SELECT c FROM Collections c where c.user.id = ?1")
     List<Collections> findAllByUser(Long userId);
 
+    @Query(nativeQuery = true, value = "select CAST(json_agg(t.*) as TEXT) as json from (select \n" +
+            "c.name collection_name, c.descriptions descriptions, u.first_name || ' ' || \n" +
+            "u.last_name as author_name, t.name as topic_name, c.image_url\n" +
+            "from collections c\n" +
+            "left join users u on u.id = c.create_user_id\n" +
+            "left join topics t on t.id = c.topic_id\n" +
+            "where c.status is true and u.id = ?1)t")
+    String getCollectionJsonDataByUserId(Long userId);
 }

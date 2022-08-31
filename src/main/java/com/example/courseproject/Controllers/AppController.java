@@ -11,8 +11,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -47,7 +50,7 @@ public class AppController {
     }
 
     @GetMapping("")
-    public String viewHomePage(Authentication authentication, HttpServletRequest request){
+    public String viewHomePage(Authentication authentication, HttpServletRequest request, HttpServletResponse response){
         if(authentication != null && authentication.isAuthenticated()){
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             if(!(userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
@@ -55,9 +58,11 @@ public class AppController {
                 return "login";
             }
             List<Items> listItems = itemRepository.findAllOrderById();
-            List<ItemProjection> projectionList = itemRepository.getItemJsonDataByUserId(customUserDetails.getUserId());
+            String projectionList = itemRepository.getItemJsonDataByUserId(customUserDetails.getUserId());
             request.setAttribute("listItems",listItems);
             request.setAttribute("projectionList",projectionList);
+            LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+            localeResolver.setLocale(request, response,new Locale(customUserDetails.getLanguage().toString()));
             return "home";
         }
         return "index";

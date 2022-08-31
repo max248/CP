@@ -13,7 +13,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
     <a href="/" class="navbar-brand">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgpEB0pwwB8BKgqs5msjHFdboMiy8LCFKKlQ&usqp=CAU" width="40" height="40" alt="" style="padding-right: 3px" class="d-inline-block align-top" />Itransition</a>
     <button type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler">
@@ -21,17 +21,21 @@
     </button>
     <div id="navbarNavDropdown" class="collapse navbar-collapse">
         <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" th:href="@{/list_users}">User list</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/list_users}" th:text="#{userlist}">User list</a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/user_profil}" rel="nofollow"><b>[[${#request.userPrincipal.principal.fullName}]]</b></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/admin_panel}" rel="nofollow">Admin-Panel</a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/logout}" rel="nofollow">Logout</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/admin_panel}" rel="nofollow" th:text="#{admin_panel}">Admin-Panel</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/logout}" rel="nofollow" th:text="#{sign_out}">Logout</a></li>
         </ul>
     </div>
 </nav>
+<label th:text="#{collection}" hidden id="collectionTxt"></label>
+<label th:text="#{details}" hidden id="detailsTxt"></label>
+<label th:text="#{topic}" hidden id="topicTxt"></label>
+<label th:text="#{comments}" hidden id="commentsTxt"></label>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h2>Last <b>Items</b></h2>
+            <h2><b th:text="#{items}">Items</b></h2>
             <!--                data-interval="3000"-->
             <div id="myCarousel" class="carousel slide z-depth-1-half" data-ride="carousel">
                 <!-- Carousel indicators -->
@@ -54,16 +58,46 @@
         </div>
     </div>
 </div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2><b th:text="#{collection}">Collections</b></h2>
+            <!--                data-interval="3000"-->
+            <div id="myCarouselCollections" class="carousel slide z-depth-1-half" data-ride="carousel">
+                <!-- Carousel indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#myCarouselCollections" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarouselCollections" data-slide-to="1"></li>
+                    <li data-target="#myCarouselCollections" data-slide-to="2"></li>
+                </ol>
+                <!-- Wrapper for carousel items -->
+                <div class="carousel-inner" id="myItemCarouselCollections">
+                </div>
+                <!-- Carousel controls -->
+                <a class="carousel-control-prev" href="#myCarouselCollections" data-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="carousel-control-next" href="#myCarouselCollections" data-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
 <script>
+    var txtCollection = document.getElementById('collectionTxt').textContent
+    var txtDetails = document.getElementById('detailsTxt').textContent
+    var txtTopic = document.getElementById('topicTxt').textContent
+    var txtComments = document.getElementById('commentsTxt').textContent
     $( document ).ready(function() {
         $.ajax({
            url: "/get_items",
            type: "POST",
            data: '',
            success: function (response){
-               console.log("response: " + JSON.stringify(response));
                var divTxt = ''
                var rowTxt = ''
                var endFlag = 0;
@@ -90,9 +124,9 @@
                        '</div>' +
                        '<div class="thumb-content">' +
                        '<h4>' + response[i].json[0].name + '</h4>' +
-                       '<div style="text-align: left;"> Collection: <a href="#">' + response[i].json[0].collection_name + '</a></div>' +
+                       '<div style="text-align: left;">' + txtCollection + ' : <a href="#">' + response[i].json[0].collection_name + '</a></div>' +
                        '<p class="item-price">' + colDiv + tagDiv +
-                       '<br>Comments: <span style="color: #4de17c"> <a href="#">' + response[i].json[0].comment_count + '</a></span>' +
+                       '<br>' + txtComments + ': <span style="color: #4de17c"> <a href="#">' + response[i].json[0].comment_count + '</a></span>' +
                        '</p>' +
                        '<div class="star-rating">' +
                        '<ul class="list-inline">' +
@@ -103,7 +137,7 @@
                        '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>' +
                        '</ul>' +
                        '</div>' +
-                       '<a href="#" class="btn btn-primary">Details</a>' +
+                       '<a href="#" class="btn btn-primary">' + txtDetails + '</a>' +
                        '</div>' +
                        '</div>' +
                        '</div>';
@@ -129,6 +163,55 @@
            },
             error: function (error){
                 console.log("error: " + error);
+            }
+        });
+        $.ajax({
+           url: "/get_collection",
+           type: "POST",
+           data: '',
+           success: function (response){
+               var divTxt = ''
+               var rowTxt = ''
+               var endFlag = 0;
+               var activeFlag = 0;
+               for (var i=0;i<response.length; i++){
+                   endFlag = 0;
+                   rowTxt +=
+                       '<div class="col-sm-3">' +
+                       '<div class="thumb-wrapper">' +
+                       '<div class="img-box">' +
+                       '<img style="height: 180px; width: 250px;" src="' + response[i].image_url + '" class="img-fluid" alt="">' +
+                       '</div>' +
+                       '<div class="thumb-content">' +
+                       '<h4>' + response[i].collection_name + '</h4>' +
+                       '<div style="text-align: left;"> ' + txtTopic + ': <a href="#">' + response[i].topic_name + '</a></div>' +
+                       '<a href="#" class="btn btn-primary">' + txtDetails + '</a>' +
+                       '</div>' +
+                       '</div>' +
+                       '</div>';
+                   if((i+1) % 4 == 0 && i > 0){
+                       console.log("if 0");
+                       if(i==3){
+                           divTxt = '<div class="carousel-item active">';
+                           activeFlag =1;
+                       } else {
+                           divTxt = '<div class="carousel-item">'
+                       }
+                       divTxt += '<div class="row"> ' + rowTxt + '</div></div>';
+                       $('#myItemCarouselCollections').append(divTxt);
+                       divTxt='';
+                       rowTxt='';
+                       endFlag = 1;
+                   }
+               }
+               if(endFlag == 0){
+                   divTxt = activeFlag?'<div class="carousel-item">':'<div class="carousel-item active">';
+                   divTxt += '<div class="row"> ' + rowTxt + '</div></div>';
+                   $('#myItemCarouselCollections').append(divTxt);
+               }
+           },
+            error: function (error){
+                console.log("collections error: " + error);
             }
         });
     });
