@@ -75,7 +75,7 @@ public class ItemController {
             String[] collectionId = request.getParameterMap().get("collectionId");
             String[] collectionColumnValues = request.getParameterMap().get("collectionColumn");
             String[] collectionColumnValueIds = request.getParameterMap().get("collectionColumnId");
-            String tags = request.getParameter("tags") != null ? request.getParameter("tags") : "";
+            String[] tags = request.getParameterMap().get("tags");
             Gson gson = new Gson();
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
             MultipartFile imageFile = multipartRequest != null?multipartRequest.getFile("image"):null;
@@ -101,11 +101,12 @@ public class ItemController {
                         ItemData itemData = new ItemData();
                         itemData.setItem(items);
                         itemData.setCollectionColumns(optionalCollectionColumns.get());
+                        if(collectionColumnValues.length>i)
                         itemData.setData(collectionColumnValues[i]);
                         itemDataRepository.save(itemData);
                     }
 
-                    for (String tag: tags.split(",")) {
+                    for (String tag: tags) {
                         Tags tags1 = new Tags();
                         if(isNumeric(tag)){
                             Optional<Tags> optionalTags = tagRepository.findById(Long.valueOf(tag));

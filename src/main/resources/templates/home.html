@@ -41,11 +41,7 @@
                     <li data-target="#myCarousel" data-slide-to="2"></li>
                 </ol>
                 <!-- Wrapper for carousel items -->
-                <div class="carousel-inner" >
-                    <div class="container mydiv">
-                        <div class="row" id="myItemCarousel">
-                        </div>
-                    </div>
+                <div class="carousel-inner" id="myItemCarousel">
                 </div>
                 <!-- Carousel controls -->
                 <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
@@ -71,102 +67,64 @@
                var divTxt = ''
                var rowTxt = ''
                var endFlag = 0;
+               var activeFlag = 0;
                for (var i=0;i<response.length; i++){
                    endFlag = 0;
                    var colDiv = '';
+                   var tagDiv = 'Tags: ';
                    if(response[i].json[0].json.columns != null)
                        response[i].json[0].json.columns.forEach(function(col){
                            colDiv +=
-                           '<div class="bbb_deals_info_line d-flex flex-row justify-content-start">' +
-                           '<div class="bbb_deals_item_name">' + col.name + '</div>' +
-                           '<div class="bbb_deals_item_price ml-auto">' + col.data + '</div>' +
-                           '</div>';
+                           col.name + ': <span>' + col.data + '</span><br>';
+                       });
+                   if(response[i].json[0].json.tags != null)
+                       response[i].json[0].json.tags.forEach(function(tag){
+                           tagDiv += '<a href="#"> #<span style="color: #00aced">' + tag.name + '</span> </a>';
                        });
 
                    rowTxt +=
-                       '<div class="col-md-4">' +
-                           '<div class="bbb_deals">' +
-                               '<div class="ribbon ribbon-top-right"><span><small class="cross">x</small>0</span></div>' +
-                               '<div class="bbb_deals_title">' + response[i].json[0].name + '</div>' +
-                                   '<div class="bbb_deals_slider_container">' +
-                                       '<div class=" bbb_deals_item">' +
-                                            '<div class="bbb_deals_image"><img style="height: 180px; width: 250px;" src="'+  response[i].json[0].image_url + '" alt=""></div>' +
-                                            '<div class="bbb_deals_content">' +
-                                                '<div class="bbb_deals_info_line d-flex flex-row justify-content-start">' +
-                                                     '<div class="bbb_deals_item_category"><a href="#">' + response[i].json[0].collection_name + '</a></div>' +
-                                                     '<div class="bbb_deals_item_price_a ml-auto"><strike>₹30,000</strike></div>' +
-                                                '</div>' +
-                                                '<div style="overflow-x: auto; overflow-y: scroll; height: 100px" ">' +
-                                                   colDiv +
-                                                '</div>' +
-                                                '<div class="available">' +
-                                                     '<div class="available_line d-flex flex-row justify-content-start">' +
-                                                          '<div class="available_title">Comments: <span>' + response[i].json[0].comment_count  + '</span></div>' +
-                                                          '<div class="sold_stars ml-auto"> ' +
-                                                               '<i class="fa fa-star"></i> ' +
-                                                               '<i class="fa fa-star"></i> <i class="fa fa-star"></i> ' +
-                                                               '<i class="fa fa-star"></i> <i class="fa fa-star"></i> ' +
-                                                          '</div>' +
-                                                     '</div>' +
-                                                     '<div class="available_bar"><span style="width:17%"></span></div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                       '</div>' +
-                                   '</div>' +
-                               '</div>' +
+                       '<div class="col-sm-3">' +
+                       '<div class="thumb-wrapper">' +
+                       '<div class="img-box">' +
+                       '<img style="height: 180px; width: 250px;" src="' + response[i].json[0].image_url + '" class="img-fluid" alt="">' +
+                       '</div>' +
+                       '<div class="thumb-content">' +
+                       '<h4>' + response[i].json[0].name + '</h4>' +
+                       '<div style="text-align: left;"> Collection: <a href="#">' + response[i].json[0].collection_name + '</a></div>' +
+                       '<p class="item-price">' + colDiv + tagDiv +
+                       '<br>Comments: <span style="color: #4de17c"> <a href="#">' + response[i].json[0].comment_count + '</a></span>' +
+                       '</p>' +
+                       '<div class="star-rating">' +
+                       '<ul class="list-inline">' +
+                       '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
+                       '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
+                       '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
+                       '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
+                       '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>' +
+                       '</ul>' +
+                       '</div>' +
+                       '<a href="#" class="btn btn-primary">Details</a>' +
+                       '</div>' +
+                       '</div>' +
                        '</div>';
-
-                   // ' <div class="col-sm-3">' +
-                   //     '<div class="thumb-wrapper">' +
-                   //     '<div class="img-box">' +
-                   //     '<img style="height: 150px; width: 200px;" src="' + response[i].json[0].image_url + '" class="img-fluid" alt="">' +
-                   //     '</div>' +
-                   //     '<div class="thumb-content">' +
-                   //     '<h6>' + response[i].json[0].name + '</h6>';
-                   // if(response[i].json[0].json.columns != null)
-                   //     response[i].json[0].json.columns.forEach(function(col){
-                   //         rowTxt += '<p class="item-price"> ' + col.name + ': <span>' + col.data + '</span></p>';
-                   //     });
-                   //
-                   //    if(response[i].json[0].json.tags != null)
-                   //    response[i].json[0].json.tags.forEach(function(tag){
-                   //        rowTxt += '<p class="item-price"> <span>' + tag.name + '</span></p>';
-                   //     });
-                   //     rowTxt +=
-                   //     '<div class="star-rating">' +
-                   //     '<ul class="list-inline">' +
-                   //     '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                   //     '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                   //     '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                   //     '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                   //     '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>' +
-                   //     '</ul>' +
-                   //     '</div>' +
-                   //     '<a href="#" class="btn btn-primary">Details</a>' +
-                   //     '</div>' +
-                   //     '</div>' +
-                   //     '</div>';
-
-                   if(i % 4 == 0 && i > 0){
-                       console.log("if ga kirdi");
-                       divTxt = (i == 0)?'<div class="carousel-item active">' : '<div class="carousel-item">';
-                       divTxt += '<div class="row">' + rowTxt + '</div></div>';
+                   if((i+1) % 4 == 0 && i > 0){
+                       if(i==3){
+                           divTxt = '<div class="carousel-item active">';
+                           activeFlag =1;
+                       } else {
+                           divTxt = '<div class="carousel-item">'
+                       }
+                       divTxt += '<div class="row"> ' + rowTxt + '</div></div>';
                        $('#myItemCarousel').append(divTxt);
                        divTxt='';
                        rowTxt='';
                        endFlag = 1;
                    }
                }
-               console.log("0 if ga kirdi: " + endFlag);
                if(endFlag == 0){
-                   console.log("1 if ga kirdi");
-                   divTxt = '<div class="carousel-item active">';
-                   divTxt += '<div class="row">' + rowTxt + '</div></div>';
-                   console.log("rowTxt: " + rowTxt);
-                   console.log("divTxt: " + divTxt);
-                   $('#myItemCarousel').append(rowTxt);
-                   divTxt='';
-                   rowTxt='';
+                   divTxt = activeFlag?'<div class="carousel-item">':'<div class="carousel-item active">';
+                   divTxt += '<div class="row"> ' + rowTxt + '</div></div>';
+                   $('#myItemCarousel').append(divTxt);
                }
            },
             error: function (error){
@@ -176,152 +134,5 @@
     });
 </script>
 <style>
-    .recent-articles-list {
-        max-height: 30rem;
-    }
-    body {
-        font-family: "Open Sans", sans-serif;
-    }
-    h2 {
-        color: #000;
-        font-size: 26px;
-        font-weight: 300;
-        text-align: center;
-        text-transform: uppercase;
-        position: relative;
-        margin: 30px 0 80px;
-    }
-    h2 b {
-        color: #ffc000;
-    }
-    h2::after {
-        content: "";
-        width: 100px;
-        position: absolute;
-        margin: 0 auto;
-        height: 4px;
-        background: rgba(0, 0, 0, 0.2);
-        left: 0;
-        right: 0;
-        bottom: -20px;
-    }
-    .carousel {
-        margin: 50px auto;
-        padding: 0 70px;
-    }
-    .carousel .carousel-item {
-        min-height: 330px;
-        text-align: center;
-        overflow: hidden;
-    }
-    .carousel .carousel-item .img-box {
-        height: 160px;
-        width: 100%;
-        position: relative;
-    }
-    .carousel .carousel-item img {
-        max-width: 100%;
-        max-height: 100%;
-        display: inline-block;
-        position: absolute;
-        bottom: 0;
-        margin: 0 auto;
-        left: 0;
-        right: 0;
-    }
-    .carousel .carousel-item h4 {
-        font-size: 18px;
-        margin: 10px 0;
-    }
-    .carousel .carousel-item .btn {
-        color: #333;
-        border-radius: 0;
-        font-size: 11px;
-        text-transform: uppercase;
-        font-weight: bold;
-        background: none;
-        border: 1px solid #ccc;
-        padding: 5px 10px;
-        margin-top: 5px;
-        line-height: 16px;
-    }
-    .carousel .carousel-item .btn:hover, .carousel .carousel-item .btn:focus {
-        color: #fff;
-        background: #000;
-        border-color: #000;
-        box-shadow: none;
-    }
-    .carousel .carousel-item .btn i {
-        font-size: 14px;
-        font-weight: bold;
-        margin-left: 5px;
-    }
-    .carousel .thumb-wrapper {
-        text-align: center;
-    }
-    .carousel .thumb-content {
-        padding: 15px;
-    }
-    .carousel-control-prev, .carousel-control-next {
-        height: 100px;
-        width: 40px;
-        background: none;
-        margin: auto 0;
-        background: rgba(0, 0, 0, 0.2);
-    }
-    .carousel-control-prev i, .carousel-control-next i {
-        font-size: 30px;
-        position: absolute;
-        top: 50%;
-        display: inline-block;
-        margin: -16px 0 0 0;
-        z-index: 5;
-        left: 0;
-        right: 0;
-        color: rgba(0, 0, 0, 0.8);
-        text-shadow: none;
-        font-weight: bold;
-    }
-    .carousel-control-prev i {
-        margin-left: -3px;
-    }
-    .carousel-control-next i {
-        margin-right: -3px;
-    }
-    .carousel .item-price {
-        font-size: 13px;
-        padding: 2px 0;
-    }
-    .carousel .item-price strike {
-        color: #999;
-        margin-right: 5px;
-    }
-    .carousel .item-price span {
-        color: #86bd57;
-        font-size: 110%;
-    }
-    .carousel .carousel-indicators {
-        bottom: -50px;
-    }
-    .carousel-indicators li, .carousel-indicators li.active {
-        width: 10px;
-        height: 10px;
-        margin: 4px;
-        border-radius: 50%;
-        border-color: transparent;
-        border: none;
-    }
-    .carousel-indicators li {
-        background: rgba(0, 0, 0, 0.2);
-    }
-    .carousel-indicators li.active {
-        background: rgba(0, 0, 0, 0.6);
-    }
-    .star-rating li {
-        padding: 0;
-    }
-    .star-rating i {
-        font-size: 14px;
-        color: #ffc000;
-    }
+
 </style>

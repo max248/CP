@@ -215,7 +215,7 @@
           </div>
           <div class="form-group col-md-12">
             <label class="form-label" for="tags">Tags</label>
-            <select class="form-select" id="tags" multiple data-allow-new="true" data-clear-label="Clear">
+            <select class="form-select" id="tags" name="tags" multiple data-allow-new="true" data-clear-label="Clear">
               <option th:each="tag : ${listTags}" th:value="${tag.id}" th:text="${tag.name}"> </option>
             </select>
             <div class="invalid-feedback">Please select a valid tag.</div>
