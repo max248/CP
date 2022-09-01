@@ -132,5 +132,17 @@ public class TagController {
         }
     }
 
-
+    @PostMapping("/get_tags")
+    public void getItem(Authentication authentication, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+            List<Tags> tagsList = tagRepository.findAllOrderById();
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(tagsList));
+        } else {
+            response.setContentType("text/html");
+            response.getWriter().write("login");
+        }
+    }
 }

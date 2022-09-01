@@ -51,7 +51,7 @@ public interface ItemRepository extends JpaRepository<Items,Long> {
             "where it.item_id = i.id)m\n" +
             ")) as json \n" +
             "\n" +
-            "from items i where i.status is true and i.create_user_id =?1 group by i.id order by i.id\n" +
+            "from items i where i.status is true group by i.id order by i.id\n" +
             ")t group by t.id) tt")
     String getItemJsonDataByUserId(Long userId);
 

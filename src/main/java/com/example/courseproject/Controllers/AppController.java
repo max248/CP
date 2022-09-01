@@ -6,6 +6,8 @@ import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.RoleRepository;
 import com.example.courseproject.Repositories.UserRepository;
 import com.example.courseproject.model.Items;
+import com.example.courseproject.model.Language;
+import com.example.courseproject.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,12 +36,16 @@ public class AppController {
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @GetMapping("/login")
-    public String loginPage(Model model, String error, String logout){
+    public String loginPage(Model model, String error, String logout, HttpServletRequest request, HttpServletResponse response){
         if (error != null)
             model.addAttribute("errorMsg", "Your username and password are invalid.");
 
         if (logout != null)
             model.addAttribute("msg", "You have been logged out successfully.");
+        String lang = request.getParameter("lang");
+        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+        localeResolver.setLocale(request, response,new Locale(lang!=null?lang: String.valueOf(Language.en)));
+        model.addAttribute("user", new User());
         return "login";
     }
 
@@ -64,7 +71,17 @@ public class AppController {
             LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
             localeResolver.setLocale(request, response,new Locale(customUserDetails.getLanguage().toString()));
             return "home";
+        } else {
+            String lang = request.getParameter("lang");
+            LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+            localeResolver.setLocale(request, response,new Locale(lang!=null?lang: String.valueOf(Language.en)));
+            return "index";
         }
-        return "index";
     }
+
+    @GetMapping("/home")
+    public String homePage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        return "redirect:" + "";
+    }
+
 }

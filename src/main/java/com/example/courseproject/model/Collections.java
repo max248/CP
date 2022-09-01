@@ -28,9 +28,6 @@ public class Collections {
     private Topics topics;
 
     @Column
-    private String image;
-
-    @Column
     private String descriptions;
 
     @Column(name = "create_date", nullable = false, length = 64)
@@ -74,14 +71,6 @@ public class Collections {
 
     public void setTopics(Topics topics) {
         this.topics = topics;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getDescriptions() {

@@ -236,7 +236,7 @@ public class UserController {
     }
 
     @PostMapping("/process_register")
-    public String processRegistration(User user, Model model){
+    public String processRegistration(User user, Model model, HttpServletRequest request){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if(userRepository.findByEmail(user.getEmail()) != null){
             model.addAttribute("errorMsg1", "Email already exists !!!");
