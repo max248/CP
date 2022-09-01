@@ -17,7 +17,7 @@ public class FileService {
 
     public String uploadFile(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        return uploadResult.get("url").toString();
+        return uploadResult.get("secure_url").toString();
     }
 
     public String getFilePath(MultipartFile file) throws IOException {
