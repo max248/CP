@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class UserController {
@@ -31,8 +34,6 @@ public class UserController {
 
     @Autowired
     private RoleRepository roleRepository;
-
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @GetMapping("/user_profil")
     public String viewUserProfil(Authentication authentication, HttpServletRequest request){
@@ -44,8 +45,9 @@ public class UserController {
             }
 
             User user = userRepository.getUserByEmail(customUserDetails.getUsername());
+            request.setAttribute("username",customUserDetails.getFullName());
             request.setAttribute("user",user);
-            request.setAttribute("test","test1");
+            request.setAttribute("lang",user.getLanguage().toString());
 
             return "user_profil";
         }
@@ -195,10 +197,34 @@ public class UserController {
             user.setAddress(address);
             user.setEmail(email);
             Date date = new Date();
-            user.setUpdateDate(formatter.format(date));
+            user.setUpdateDate(date);
             userRepository.save(user);
             response.getWriter().write("success");
-            return;
+        } else {
+            response.getWriter().write("login");
+        }
+    }
+    @PostMapping("/set_lang")
+    public void setLang(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
+        if(authentication != null && authentication.isAuthenticated()){
+                CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            if(!(userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
+                authentication.setAuthenticated(false);
+                response.getWriter().write("login");
+                return;
+            }
+            String lang = request.getParameter("lang");
+            User user = userRepository.findByEmail(customUserDetails.getUsername());
+            user.setLanguage(Language.valueOf(lang));
+            Date date = new Date();
+            user.setUpdateDate(date);
+            userRepository.save(user);
+
+            LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+            localeResolver.setLocale(request, response,new Locale(lang!=null?lang: String.valueOf(Language.en)));
+            response.getWriter().write("success");
         } else {
             response.getWriter().write("login");
         }
@@ -223,7 +249,7 @@ public class UserController {
             if(encoder.matches(old_pass,user.getPassword()) && pass1.equals(pass2) && pass1.length()>0){
                 user.setPassword(encoder.encode(pass1));
                 Date date = new Date();
-                user.setUpdateDate(formatter.format(date));
+                user.setUpdateDate(date);
                 userRepository.save(user);
                 response.getWriter().write("success");
             } else {
@@ -245,8 +271,8 @@ public class UserController {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setEnabled(true);
         Date date = new Date();
-        user.setRegDate(formatter.format(date));
-        user.setLastLoginDate(formatter.format(date));
+        user.setRegDate(date);
+        user.setLastLoginDate(date);
         Role role = new Role();
         role = roleRepository.findByRoleName("USER");
         user.setRole(role);

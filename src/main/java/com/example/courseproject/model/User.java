@@ -4,8 +4,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
 @Entity
 @Table(name = "users")
@@ -33,13 +32,13 @@ public class User {
     private String lastName;
 
     @Column(nullable = false, length = 32)
-    private String regDate;
+    private Date regDate;
 
     @Column(nullable = false, length = 32)
-    private String lastLoginDate;
+    private Date lastLoginDate;
 
     @Column(nullable = true, length = 32)
-    private String updateDate;
+    private Date updateDate;
 
     @Column(nullable = true, length = 32)
     private String phoneNumber;
@@ -56,16 +55,20 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Language language;
 
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getEmail() {
@@ -100,36 +103,31 @@ public class User {
         this.lastName = lastName;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getRegDate() {
+    public Date getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(Date regDate) {
         this.regDate = regDate;
     }
 
-    public String getLastLoginDate() {
+    public Date getLastLoginDate() {
         return lastLoginDate;
     }
 
-    public void setLastLoginDate(String lastLoginDate) {
+    public void setLastLoginDate(Date lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
     }
 
-    public Role getRole() {
-        return role;
+    public Date getUpdateDate() {
+        return updateDate;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
     public String getPhoneNumber() {
@@ -148,12 +146,12 @@ public class User {
         this.address = address;
     }
 
-    public String getUpdateDate() {
-        return updateDate;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setUpdateDate(String updateDate) {
-        this.updateDate = updateDate;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Provider getProvider() {

@@ -93,6 +93,9 @@
                     You have been logged out.
                 </div>
                 <form class="register-form" th:action="@{/process_register}" method="post" th:object="${user}">
+                    <div>
+                        <label th:text="${errorMsg1}"></label>
+                    </div>
                     <input type="email" class="form-control"   required th:placeholder="#{email}" th:field="*{email}"/>
                     <input type="password" class="form-control" required th:placeholder="#{password}" th:field="*{password}"
                            minlength="1" maxlength="10"/>

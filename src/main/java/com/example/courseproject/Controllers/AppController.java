@@ -65,8 +65,9 @@ public class AppController {
                 return "login";
             }
             request.setAttribute("role",customUserDetails.getRole().getName());
+            User user = userRepository.findByEmail(customUserDetails.getUsername());
             LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-            localeResolver.setLocale(request, response,new Locale(customUserDetails.getLanguage().toString()));
+            localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
             return "home";
         } else {
             String lang = request.getParameter("lang");

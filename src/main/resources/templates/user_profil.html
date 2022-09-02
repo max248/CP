@@ -66,7 +66,7 @@
                     <div class="user_profle_side">
                         <div class="user_img"><img class="img-responsive" src="/img/user_img.jpg" alt="#"/></div>
                         <div class="user_info">
-                            <h6>John David</h6>
+                            <h6><label th:text="${username}"/></h6>
                             <p><span class="online_animation"></span> Online</p>
                         </div>
                     </div>
@@ -80,6 +80,9 @@
                     <li><a th:href="@{/collection_settings}"><i class="fa fa-outdent"></i> <span>Collections</span></a></li>
                     <li><a th:href="@{/item_settings}"><i class="fa fa-align-left" aria-hidden="true"></i> <span>Items</span></a></li>
                     <li><a th:href="@{/tag_settings}"><i class="fa fa-slack" aria-hidden="true"></i> <span>Tags</span></a></li>
+                    <li><a th:href="@{/user_profil}"><i class="fa fa-user" aria-hidden="true"></i> <span>My Profile</span></a></li>
+                    <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> <span>Home</span></a></li>
+                    <li><a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> <span th:text="#{sign_out}">Log Out</span></a></li>
                 </ul>
             </div>
         </nav>
@@ -98,7 +101,7 @@
                                     <li>
                                         <a class="dropdown-toggle" data-toggle="dropdown"><img
                                                 class="img-responsive rounded-circle" src="/img/user_img.jpg"
-                                                alt="#"/><span class="name_user">John David</span></a>
+                                                alt="#"/><span class="name_user"><label th:text="${username}"/></span></a>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="/user_profil">My Profile</a>
                                             <a class="dropdown-item" href="/">Home</a>
@@ -137,6 +140,24 @@
                                 </div>
                                 <div class="col-md-5 border-right">
                                     <div class="p-3 py-5">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="text-right">Set Language</h4>
+                                            <label hidden id="lang" th:text="${lang}"></label>
+                                            <div class="row">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="lang_en" value="en" onclick="setLanguage('en')">
+                                                    <label class="form-check-label" for="lang_en">EN</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="lang_ru" value="ru" onclick="setLanguage('ru')">
+                                                    <label class="form-check-label" for="lang_ru">RU</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="lang_uz" value="uz" onclick="setLanguage('uz')">
+                                                    <label class="form-check-label" for="lang_uz">UZ</label>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h4 class="text-right">Profile Settings</h4>
                                         </div>
@@ -194,9 +215,7 @@
                     <!-- footer -->
                     <div class="container-fluid">
                         <div class="footer">
-                            <p>Copyright © 2018 Designed by html.design. All rights reserved.<br><br>
-                                Distributed By: <a href="#">ThemeWagon</a>
-                            </p>
+                            <p>2022. Yuldoshev Abbos</p>
                         </div>
                     </div>
                 </div>
@@ -208,6 +227,28 @@
 </body>
 </html>
 <script>
+    var lang = document.getElementById('lang').textContent;
+    $(document).ready(function (){
+        console.log("lang: " + lang);
+        document.getElementById("lang_" + lang).disabled = true;
+        document.getElementById("lang_" + lang).checked = true;
+    });
+
+    function setLanguage(lang){
+        $.ajax({
+            url: "set_lang",
+            type: "POST",
+            data: 'lang=' + lang,
+            success: function (response){
+                if(response == 'success'){
+                    window.location.reload();
+                }
+            },
+            error: function (){
+                console.log("error: " + error);
+            }
+        });
+    }
     function updatePassword(){
         var data =
             'old_pass=' + $("#old_pass").val() +

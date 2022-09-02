@@ -132,8 +132,8 @@ public class AuthorizationController {
                     user.setPassword(encoder.encode(generatePassword(8)));
                     user.setEnabled(true);
                     Date date = new Date();
-                    user.setRegDate(formatter.format(date));
-                    user.setLastLoginDate(formatter.format(date));
+                    user.setRegDate(date);
+                    user.setLastLoginDate(date);
                     user.setProvider(Provider.GOOGLE);
                     Role role = new Role();
                     role = roleRepository.findByRoleName("USER");
