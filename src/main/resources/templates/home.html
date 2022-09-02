@@ -64,6 +64,8 @@
                                     </li>
                                     <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/user_profil}" rel="nofollow"><b>[[${#request.userPrincipal.principal.fullName}]]</b></a>
                                     </li>
+                                    <li class="rd-nav-item"><a class="rd-nav-link" th:if="${role == 'ADMIN'}" th:href="@{/admin_panel}" rel="nofollow" th:text="#{admin_panel}">Admin-Panel</a>
+                                    </li>
                                     <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/logout}" rel="nofollow" th:text="#{sign_out}">Logout</a>
                                     </li>
                                     <li class="rd-nav-item">

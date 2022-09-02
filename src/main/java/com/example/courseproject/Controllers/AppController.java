@@ -64,10 +64,7 @@ public class AppController {
                 authentication.setAuthenticated(false);
                 return "login";
             }
-            List<Items> listItems = itemRepository.findAllOrderById();
-            String projectionList = itemRepository.getItemJsonDataByUserId(customUserDetails.getUserId());
-            request.setAttribute("listItems",listItems);
-            request.setAttribute("projectionList",projectionList);
+            request.setAttribute("role",customUserDetails.getRole().getName());
             LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
             localeResolver.setLocale(request, response,new Locale(customUserDetails.getLanguage().toString()));
             return "home";

@@ -40,6 +40,9 @@ public class CustomUserDetails implements UserDetails {
     public Language getLanguage(){
         return user.getLanguage();
     }
+    public Role getRole(){
+        return user.getRole();
+    }
 
     public Long getUserId(){
         return user.getId();
