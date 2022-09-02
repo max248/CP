@@ -64,6 +64,12 @@ public class ItemController {
         model.addAttribute("listTags",tagsList);
         return "item_settings";
     }
+    @GetMapping("/item")
+    public String viewItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String itemId = request.getParameter("item_id");
+        request.setAttribute("item_id",itemId);
+        return "item";
+    }
 
     @PostMapping("/add_item")
     public void addItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -150,7 +156,6 @@ public class ItemController {
     public static boolean isNumeric(final String str) {
         return NumberUtils.isDigits(str);
     }
-
     @PostMapping("/delete_item")
     public void deleteItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
@@ -238,6 +243,15 @@ public class ItemController {
             String projectionList = itemRepository.getItemJsonDataByUserId(null);
             response.getWriter().write(projectionList);
         }
+    }
+
+    @PostMapping("/get_item_id")
+    public void getItemById(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        String itemId = request.getParameter("item_id");
+        String projectionList = itemRepository.getItemJsonDataByItemId(Long.valueOf(itemId));
+        response.getWriter().write(projectionList);
     }
 
 }
