@@ -116,7 +116,6 @@
     </footer>
 </div>
 <div class="snackbars" id="form-output-global"></div>
-<script src="/js/core.min.js"></script>
 </body>
 </html>
 <script>
@@ -188,13 +187,15 @@
             }
         });
 
-        // var tagString = '<script async type=\"text/javascript\" src=\"/js/script.js\"><\/script>';
-        // var range = document.createRange();
-        // range.selectNode(document.getElementsByTagName("BODY")[0]);
-        // var documentFragment = range.createContextualFragment(tagString);
-        // document.body.appendChild(documentFragment);
+        var tagString = '<script async type=\"text/javascript\" src=\"/js/script.js\"><\/script>';
+        var range = document.createRange();
+        range.selectNode(document.getElementsByTagName("BODY")[0]);
+        var documentFragment = range.createContextualFragment(tagString);
+        document.body.appendChild(documentFragment);
     });
 </script>
+<script src="/js/core.min.js"></script>
+<script src="/js/script.js"></script>
 <style>
     .dark-mode{
         background-color: rgb(11 18 64 / 84%);
