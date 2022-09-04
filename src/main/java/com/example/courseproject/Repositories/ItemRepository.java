@@ -111,5 +111,11 @@ public interface ItemRepository extends JpaRepository<Items,Long> {
             "from items i where i.status is true group by i.id order by i.id\n" +
             ")t group by t.id) tt")
     String getAllItems();
+    @Query(nativeQuery = true, value = "select CAST(json_agg(tt.*) as text) as json from (select \n" +
+            "(select count(t.id) from topics  t) as topic_count, \n" +
+            "(select count(c.id) from collections c) as collection_count, \n" +
+            "(select count(i.id) from items i) as item_count, \n" +
+            "(select count(cc.id) from comments cc) as comment_count)tt\n")
+    String getAllCounts();
 
 }

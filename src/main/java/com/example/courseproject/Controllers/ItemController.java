@@ -50,11 +50,14 @@ public class ItemController {
     @Autowired
     private FileService fileService;
     @GetMapping("/item_settings")
-    public String viewItemSettingsPage(Authentication authentication, HttpServletRequest request, Model model){
+    public String viewItemSettingsPage(Authentication authentication, HttpServletRequest request, Model model, HttpServletResponse response){
         CustomUserDetails customUserDetails = authentication != null ? (CustomUserDetails) authentication.getPrincipal() : null;
         if(!( customUserDetails != null && userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
             return "login";
         }
+        User user = userRepository.getUserByEmail(customUserDetails.getUsername());
+        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+        localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
         request.setAttribute("username",customUserDetails.getFullName());
         List<Items> itemsList = itemRepository.findAll();
         List<Collections> collectionsList = collectionRepository.findAll();
@@ -62,6 +65,7 @@ public class ItemController {
         model.addAttribute("listItems",itemsList);
         model.addAttribute("listCollections",collectionsList);
         model.addAttribute("listTags",tagsList);
+        request.setAttribute("role",customUserDetails.getRole().getName());
         return "item_settings";
     }
     @GetMapping("/item")

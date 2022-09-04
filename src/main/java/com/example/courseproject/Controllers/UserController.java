@@ -3,6 +3,7 @@ package com.example.courseproject.Controllers;
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.RoleRepository;
 import com.example.courseproject.Repositories.UserRepository;
+import com.example.courseproject.Services.FileService;
 import com.example.courseproject.model.Language;
 import com.example.courseproject.model.Provider;
 import com.example.courseproject.model.Role;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -34,9 +37,11 @@ public class UserController {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private FileService fileService;
 
     @GetMapping("/user_profil")
-    public String viewUserProfil(Authentication authentication, HttpServletRequest request){
+    public String viewUserProfil(Authentication authentication, HttpServletRequest request, HttpServletResponse response){
         if(authentication != null && authentication.isAuthenticated()){
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             if(!(userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
@@ -48,6 +53,9 @@ public class UserController {
             request.setAttribute("username",customUserDetails.getFullName());
             request.setAttribute("user",user);
             request.setAttribute("lang",user.getLanguage().toString());
+            request.setAttribute("role",customUserDetails.getRole().getName());
+            LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+            localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
 
             return "user_profil";
         }
@@ -61,7 +69,7 @@ public class UserController {
     }
 
     @GetMapping("/list_users")
-    public String viewUsersList(Authentication authentication, Model model){
+    public String viewUsersList(Authentication authentication, Model model, HttpServletRequest request, HttpServletResponse response){
         if(authentication != null && authentication.isAuthenticated()){
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             if(!(userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
@@ -69,6 +77,9 @@ public class UserController {
                 return "login";
             }
             List<User> userList = userRepository.findAll();
+            User user = userRepository.getUserByEmail(customUserDetails.getUsername());
+            LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+            localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
             model.addAttribute("listUser",userList);
             return "users";
         } else {
@@ -262,7 +273,7 @@ public class UserController {
     }
 
     @PostMapping("/process_register")
-    public String processRegistration(User user, Model model, HttpServletRequest request){
+    public String processRegistration(User user, Model model, HttpServletRequest request) throws IOException {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if(userRepository.findByEmail(user.getEmail()) != null){
             model.addAttribute("errorMsg1", "Email already exists !!!");
@@ -278,6 +289,7 @@ public class UserController {
         user.setRole(role);
         user.setProvider(Provider.LOCAL);
         user.setLanguage(Language.en);
+        user.setImageUrl(fileService.getFilePath(null));
         userRepository.save(user);
         return "register_success";
     }

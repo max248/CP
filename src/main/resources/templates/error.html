@@ -66,14 +66,14 @@
                                     </li>
                                     <li class="rd-nav-item">
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" class="custom-control-input" id="switchDark">
+                                            <input type="checkbox" class="custom-control-input" id="switchDark" onclick="switcher()">
                                             <label class="custom-control-label" for="switchDark" th:text="#{dark_mode}"></label>
                                         </div>
                                     </li>
                                     <li class="rd-nav-item">
-                                        <a class="lang"th:href="@{/?lang=en}">En</a>|
-                                        <a class="lang"th:href="@{/?lang=ru}">Ru</a>|
-                                        <a class="lang"th:href="@{/?lang=uz}">Uz</a>
+                                        <a class="lang"th:href="@{/error?lang=en}">En</a>|
+                                        <a class="lang"th:href="@{/error?lang=ru}">Ru</a>|
+                                        <a class="lang"th:href="@{/error?lang=uz}">Uz</a>
                                     </li>
                                 </ul>
                             </div>
@@ -86,7 +86,7 @@
     <div class="section">
         <div class="text-center" style="height: 80vh;">
             <h3 class="title" th:text="#{wrong_message}">Something went wrong!</h3>
-            <h4 th:text="wrong_message_descriptions">Our Engineers are on it</h4>
+            <h4 th:text="#{wrong_message_descriptions}">Our Engineers are on it</h4>
         </div>
     </div>
     <footer class="section footer-classic context-dark">

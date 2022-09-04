@@ -43,11 +43,12 @@ public class CollectionController {
     @Autowired
     private FileService fileService;
     @GetMapping("/collection_settings")
-    public String viewTopicSettingsPage(Authentication authentication, HttpServletRequest request, Model model){
+    public String viewTopicSettingsPage(Authentication authentication, HttpServletRequest request, Model model, HttpServletResponse response){
         CustomUserDetails customUserDetails = authentication != null ? (CustomUserDetails) authentication.getPrincipal() : null;
         if(!( customUserDetails != null && userRepository.findByEmail(customUserDetails.getUsername()) != null && userRepository.findByEmail(customUserDetails.getUsername()).isEnabled())){
             return "login";
         }
+        User user = userRepository.getUserByEmail(customUserDetails.getUsername());
         request.setAttribute("username",customUserDetails.getFullName());
         List<Topics> listTopics = topicRepository.findAllOrderById();
         List<Collections> listCollections = collectionRepository.findAllOrderById();
@@ -55,6 +56,9 @@ public class CollectionController {
         model.addAttribute("listCollections",listCollections);
         model.addAttribute("listTopics",listTopics);
         model.addAttribute("listColumnType",listColumnType);
+        request.setAttribute("role",customUserDetails.getRole().getName());
+        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+        localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
         return "collection_settings";
     }
     @GetMapping("/collection")

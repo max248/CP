@@ -29,11 +29,7 @@ public class AppController {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
     private ItemRepository itemRepository;
-
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @GetMapping("/login")
     public String loginPage(Model model, String error, String logout, HttpServletRequest request, HttpServletResponse response){
@@ -52,7 +48,10 @@ public class AppController {
     @GetMapping("/admin_panel")
     public String adminPage(Authentication authentication, HttpServletRequest request){
         CustomUserDetails customUserDetails = authentication != null ? (CustomUserDetails) authentication.getPrincipal() : null;
+        String jsonCounts = itemRepository.getAllCounts();
         request.setAttribute("username",customUserDetails.getFullName());
+        request.setAttribute("jsonCounts",jsonCounts);
+        request.setAttribute("role",customUserDetails.getRole().getName());
         return "admin_panel";
     }
 
