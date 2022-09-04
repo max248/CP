@@ -5,6 +5,7 @@ import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.*;
 import com.example.courseproject.Services.FileService;
 import com.example.courseproject.model.*;
+import com.example.courseproject.model.Collections;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class ItemController {
@@ -66,8 +66,19 @@ public class ItemController {
     }
     @GetMapping("/item")
     public String viewItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String itemId = request.getParameter("item_id");
+        String itemId = request.getParameter("item_id") != null? request.getParameter("item_id") : "0";
         request.setAttribute("item_id",itemId);
+
+        if(authentication != null && authentication.isAuthenticated()){
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            if(customUserDetails != null){
+                request.setAttribute("role",customUserDetails.getRole().getName());
+                request.setAttribute("sign", true);
+                User user = userRepository.findByEmail(customUserDetails.getUsername());
+                LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+                localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+            }
+        }
         return "item";
     }
 

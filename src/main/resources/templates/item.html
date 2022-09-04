@@ -59,7 +59,7 @@
             </div>
             <div class="rd-navbar-main-element">
               <div class="rd-navbar-nav-wrap">
-                <ul class="rd-navbar-nav">
+                <ul class="rd-navbar-nav" th:if="${sign == false}">
                   <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/login}" th:text="#{sign_in}">Sign in</a>
                   </li>
                   <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/register}" th:text="#{sign_up}">Sign up</a>
@@ -70,10 +70,21 @@
                       <label class="custom-control-label" for="switchDark" th:text="#{dark_mode}"></label>
                     </div>
                   </li>
+                </ul>
+                <ul class="rd-navbar-nav" th:if="${sign == true}">
+                  <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/list_users}" th:text="#{userlist}">User list</a>
+                  </li>
+                  <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/user_profil}" rel="nofollow"><b>[[${#request.userPrincipal.principal.fullName}]]</b></a>
+                  </li>
+                  <li class="rd-nav-item"><a class="rd-nav-link" th:if="${role == 'ADMIN'}" th:href="@{/admin_panel}" rel="nofollow" th:text="#{admin_panel}">Admin-Panel</a>
+                  </li>
+                  <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/logout}" rel="nofollow" th:text="#{sign_out}">Logout</a>
+                  </li>
                   <li class="rd-nav-item">
-                    <a class="lang"th:href="@{/?lang=en}">En</a>|
-                    <a class="lang"th:href="@{/?lang=ru}">Ru</a>|
-                    <a class="lang"th:href="@{/?lang=uz}">Uz</a>
+                    <div class="custom-control custom-switch">
+                      <input type="checkbox" class="custom-control-input" id="switchDark">
+                      <label class="custom-control-label" for="switchDark" th:text="#{dark_mode}"></label>
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -92,12 +103,22 @@
     <div class="section">
       <div class="row">
         <div class="col-md-6" id="myItemCarousel">
-
         </div>
         <div class="col-md-6">
-          <div class="text-center" id="myComments">
+          <div class="row">
             <h3 class="title" th:text="#{comments}">Comments</h3>
+            <div class="container" id="myComments" style="overflow-y: scroll; height: 45vh;">
+            </div>
+
           </div>
+          <form class="form" th:if="${sign == true}" style="padding-top: 5px;">
+            <div>
+              <textarea class="form-control" rows="3" placeholder="Your comments" id="contentComment" style="width: 80%"></textarea>
+            </div>
+            <div style="text-align: right; width: 80%; padding-top: 5px;">
+              <button type="button" class="btn btn-success" onclick="addComment()">Add</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -131,24 +152,79 @@
 <script>
   $("#switchDark").change(function (){
     $("body").toggleClass("bg-secondary");
-    $(".section,.rd-navbar-main-outer").toggleClass("dark-mode");
+    $(".section,.rd-navbar-main-outer, .container, .card").toggleClass("dark-mode");
     $("nav").toggleClass("nav-dark-mode");
     $(".custom-control-label").toggleClass("text-white");
-    $("h1, h2, h3, p, div,.rd-nav-item,.rd-nav-link,.lang").toggleClass("text-white");
+    $("h1, h2, h3, p, div,.rd-nav-item,.rd-nav-link,.lang, .a, .strong").toggleClass("text-white");
   });
 
-  var itemId = document.getElementById('item_id').textContent
-  var txtCollection = document.getElementById('collectionTxt').textContent
-  var txtDetails = document.getElementById('detailsTxt').textContent
-  var txtTopic = document.getElementById('topicTxt').textContent
-  var txtComments = document.getElementById('commentsTxt').textContent
+  var itemId = document.getElementById('item_id').textContent;
+  var txtCollection = document.getElementById('collectionTxt').textContent;
+  var txtDetails = document.getElementById('detailsTxt').textContent;
+  var txtTopic = document.getElementById('topicTxt').textContent;
+  var txtComments = document.getElementById('commentsTxt').textContent;
 
+  function addComment(){
+    var contentComment = document.getElementById('contentComment').value;
+    console.log("content: " + contentComment);
+    $.ajax({
+      url: "/add_comment",
+      type: "POST",
+      data: 'item_id=' + itemId + '&content=' + contentComment,
+      success: function (response){
+        if(response == 'success'){
+          window.location.href = "item?item_id=" + itemId;
+        }
+      },
+      error: function (error){
+        console.log("error: " + error);
+      }
+    });
+  }
   $.ajax({
+    url: "/get_comments",
+    type: "POST",
+    data: 'item_id=' + itemId,
+    success: function (response){
+      console.log("comments json: " + JSON.stringify(response));
+      var rowTxt = ''
+      for (var i=0;i<response.length; i++){
+        console.log("imageUrl: " + response[i].user.imageUrl);
+        rowTxt +=
+                '<div class="card">' +
+                '<div class="card-body">' +
+                '<div class="row">' +
+                '<div class="col-md-2">' +
+                '<img src="' + response[i].user.imageUrl + '" class="img img-rounded img-fluid"/>' +
+                '</div>' +
+                '<div class="col-md-10">' +
+                '<p>' +
+                '<a class="float-left" href="#">' +
+                '<strong>' + response[i].user.firstName + ' ' + response[i].user.lastName + '</strong></a>&ensp;'
+                + response[i].createDate +
+                '</p>' +
+                '<div class="clearfix"></div>' +
+                '<p>' + response[i].content +
+                '</p>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+      }
+      console.log("rowTxt: " + rowTxt);
+      $('#myComments').append(rowTxt);
+    },
+    error: function (error){
+      console.log("error: " + error);
+    }
+  });
+
+    $.ajax({
     url: "/get_item_id",
     type: "POST",
     data: 'item_id=' + itemId,
     success: function (response){
-      console.log("response: " + JSON.stringify(response));
+      // console.log("response: " + JSON.stringify(response));
       var rowTxt = ''
       for (var i=0;i<response.length; i++){
         // rowTxt = '';
@@ -172,7 +248,8 @@
                 '</div>' +
                 '<div class="testimonial-text">' +
                 '<p class="item-price">' + colDiv + tagDiv +
-                '<br>' + txtComments + ' :<span style="color: #4de17c"> <a href="#">' + response[i].json[0].comment_count + '</a></span></p>' +
+                '<br>' + txtComments + ' :<span style="color: #4de17c"> ' +
+                '<a href="/item?item_id=' + response[i].json[0].id + '">' + response[i].json[0].comment_count + '</a></span></p>' +
                 '</div>' +
                 '<div class="testimonial-name">' + txtCollection + ' : <a href="#">Strategy</a></div>' +
                 '<div class="star-rating">' +
@@ -186,13 +263,9 @@
                 '</div>' +
                 '</div>';
       }
-      console.log("rowTxt: " + rowTxt);
       var divTxt = '<div class="owl-theme-1" data-items="1" data-sm-items="1" data-md-items="1" data-lg-items="1" data-xl-items="2" data-xxl-items="3" data-margin="15px" data-nav="false" data-dots="true">';
       divTxt += rowTxt + '</div>';
-      console.log("divTxt: " + divTxt);
       $('#myItemCarousel').append(divTxt);
-
-
     },
     error: function (error){
       console.log("error: " + error);

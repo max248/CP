@@ -162,7 +162,8 @@
                         '</div>' +
                         '<div class="testimonial-text">' +
                         '<p class="item-price">' + colDiv + tagDiv +
-                        '<br>' + txtComments + ' :<span style="color: #4de17c"> <a href="#">' + response[i].json[0].comment_count + '</a></span></p>' +
+                        '<br>' + txtComments + ' :<span style="color: #4de17c"> ' +
+                        '<a href="/item?item_id=' + response[i].json[0].id + '">' + response[i].json[0].comment_count + '</a></span></p>' +
                         '</div>' +
                         '<div class="testimonial-name">' + txtCollection + ' : <a href="#">Strategy</a></div>' +
                         '<div class="star-rating">' +

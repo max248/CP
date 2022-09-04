@@ -46,6 +46,9 @@ public class User {
     @Column(nullable = true, length = 32)
     private String address;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column
     private boolean enabled;
 
@@ -168,6 +171,14 @@ public class User {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override

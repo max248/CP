@@ -60,19 +60,20 @@
                         <div class="rd-navbar-main-element">
                             <div class="rd-navbar-nav-wrap">
                                 <ul class="rd-navbar-nav">
-                                    <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/list_users}" th:text="#{userlist}">User list</a>
+                                    <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/login}" th:text="#{sign_in}">Sign in</a>
                                     </li>
-                                    <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/user_profil}" rel="nofollow"><b>[[${#request.userPrincipal.principal.fullName}]]</b></a>
-                                    </li>
-                                    <li class="rd-nav-item"><a class="rd-nav-link" th:if="${role == 'ADMIN'}" th:href="@{/admin_panel}" rel="nofollow" th:text="#{admin_panel}">Admin-Panel</a>
-                                    </li>
-                                    <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/logout}" rel="nofollow" th:text="#{sign_out}">Logout</a>
+                                    <li class="rd-nav-item"><a class="rd-nav-link" th:href="@{/register}" th:text="#{sign_up}">Sign up</a>
                                     </li>
                                     <li class="rd-nav-item">
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="switchDark">
                                             <label class="custom-control-label" for="switchDark" th:text="#{dark_mode}"></label>
                                         </div>
+                                    </li>
+                                    <li class="rd-nav-item">
+                                        <a class="lang"th:href="@{/?lang=en}">En</a>|
+                                        <a class="lang"th:href="@{/?lang=ru}">Ru</a>|
+                                        <a class="lang"th:href="@{/?lang=uz}">Uz</a>
                                     </li>
                                 </ul>
                             </div>
@@ -82,13 +83,10 @@
             </nav>
         </div>
     </header>
-    <label th:text="#{collection}" hidden id="collectionTxt"></label>
-    <label th:text="#{details}" hidden id="detailsTxt"></label>
-    <label th:text="#{topic}" hidden id="topicTxt"></label>
-    <label th:text="#{comments}" hidden id="commentsTxt"></label>
-    <div class="section" id="myItemCarousel">
-        <div class="text-center">
-            <h2 class="title" th:text="#{items}">Items</h2>
+    <div class="section">
+        <div class="text-center" style="height: 80vh;">
+            <h3 class="title" th:text="#{wrong_message}">Something went wrong!</h3>
+            <h4 th:text="wrong_message_descriptions">Our Engineers are on it</h4>
         </div>
     </div>
     <footer class="section footer-classic context-dark">
@@ -118,82 +116,11 @@
 </body>
 </html>
 <script>
-    var txtCollection = document.getElementById('collectionTxt').textContent
-    var txtDetails = document.getElementById('detailsTxt').textContent
-    var txtTopic = document.getElementById('topicTxt').textContent
-    var txtComments = document.getElementById('commentsTxt').textContent
-    $(document).ready(function (){
-
-        $("#switchDark").change(function (){
-            $("body").toggleClass("bg-secondary");
-            $(".section,.rd-navbar-main-outer").toggleClass("dark-mode");
-            $("nav").toggleClass("nav-dark-mode");
-            $(".custom-control-label").toggleClass("text-white");
-            $("h1,h2, p, div,.rd-nav-item,.rd-nav-link,.lang").toggleClass("text-white");
-        });
-
-        $.ajax({
-            url: "/get_items",
-            type: "POST",
-            data: '',
-            success: function (response){
-                // console.log("response: " + JSON.stringify(response));
-                var rowTxt = ''
-                for (var i=0;i<response.length; i++){
-                    // rowTxt = '';
-                    var colDiv = '';
-                    var tagDiv = 'Tags: ';
-                    if(response[i].json[0].json.columns != null)
-                        response[i].json[0].json.columns.forEach(function(col){
-                            colDiv +=
-                                col.name + ': <span>' + col.data + '</span><br>';
-                        });
-                    if(response[i].json[0].json.tags != null)
-                        response[i].json[0].json.tags.forEach(function(tag){
-                            tagDiv += '<a href="#"> #<span style="color: #00aced">' + tag.name + '</span> </a>';
-                        });
-                    rowTxt +=
-                        '<div class="testimonial-box">' +
-                        '<div class="testimonial-title">' + response[i].json[0].name + '</div>' +
-                        '<div>' +
-                        '<img src="' + response[i].json[0].image_url + '" ' +
-                        'alt=""/>' +
-                        '</div>' +
-                        '<div class="testimonial-text">' +
-                        '<p class="item-price">' + colDiv + tagDiv +
-                        '<br>' + txtComments + ' :<span style="color: #4de17c"> ' +
-                        '<a href="/item?item_id=' + response[i].json[0].id + '">' + response[i].json[0].comment_count + '</a></span></p>' +
-                        '</div>' +
-                        '<div class="testimonial-name">' + txtCollection + ' : <a href="#">Strategy</a></div>' +
-                        '<div class="star-rating">' +
-                        '<ul class="list-inline">' +
-                        '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                        '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                        '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                        '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                        '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>' +
-                        '</ul>' +
-                        '</div>' +
-                        '<a href="/item?item_id=' + response[i].json[0].id  +
-                        '" class="btn btn-primary">' + txtDetails + '</a>'+
-                        '</div>';
-                }
-                var divTxt = '<div class="owl-carousel owl-theme-1" data-items="1" data-sm-items="1" data-md-items="1" data-lg-items="1" data-xl-items="2" data-xxl-items="3" data-margin="15px" data-nav="false" data-dots="true">';
-                divTxt += rowTxt + '</div>';
-                $('#myItemCarousel').append(divTxt);
-
-            },
-            error: function (error){
-                console.log("error: " + error);
-            }
-        });
-
-        var tagString = '<script async type=\"text/javascript\" src=\"/js/script.js\"><\/script>';
-        var range = document.createRange();
-        range.selectNode(document.getElementsByTagName("BODY")[0]);
-        var documentFragment = range.createContextualFragment(tagString);
-        document.body.appendChild(documentFragment);
-    });
+    var tagString = '<script async type=\"text/javascript\" src=\"/js/script.js\"><\/script>';
+    var range = document.createRange();
+    range.selectNode(document.getElementsByTagName("BODY")[0]);
+    var documentFragment = range.createContextualFragment(tagString);
+    document.body.appendChild(documentFragment);
 </script>
 <script src="/js/core.min.js"></script>
 <script src="/js/script.js"></script>
