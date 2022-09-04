@@ -41,6 +41,7 @@ public interface ItemRepository extends JpaRepository<Items,Long> {
             "(select i.id, i.name, i.image_url," +
             "(select name from collections where id = i.collection_id) as collection_name," +
             "(select count(*) from comments where item_id = i.id) as comment_count,\n" +
+            "(select  COALESCE(round(sum(rate)/COALESCE(count(id),0)),0) as overall_rate from rates where item_id = i.id) as overall_rate,\n" +
             "json_build_object('columns',\n" +
             "(select json_agg(m.*) from (select cc.name,itd.data from item_data  itd\n" +
             "left join collection_columns cc on cc.id = itd.collection_column_id\n" +
@@ -60,6 +61,7 @@ public interface ItemRepository extends JpaRepository<Items,Long> {
             "(select i.id, i.name, i.image_url," +
             "(select name from collections where id = i.collection_id) as collection_name," +
             "(select count(*) from comments where item_id = i.id) as comment_count,\n" +
+            "(select  COALESCE(round(sum(rate)/COALESCE(count(id),0)),0) as overall_rate from rates where item_id = i.id) as overall_rate,\n" +
             "json_build_object('columns',\n" +
             "(select json_agg(m.*) from (select cc.name,itd.data from item_data  itd\n" +
             "left join collection_columns cc on cc.id = itd.collection_column_id\n" +

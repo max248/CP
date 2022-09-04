@@ -19,6 +19,8 @@
     <script
             nomodule>window.MSInputMethodContext && document.documentMode && document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-ie11@5/css/bootstrap-ie11.min.css">' +
         '<script src="https://cdn.jsdelivr.net/npm/ie11-custom-properties@4/ie11CustomProperties.min.js"><\/script>');</script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <script type="text/javascript" src="/js/custom.js"></script>
 </head>
 <body>
 <div class="ie-panel"><a href="#"><img src="/img/logo.jpg" height="42" width="820"
@@ -121,67 +123,14 @@
 <script>
     var txtCollection = document.getElementById('collectionTxt').textContent
     var txtDetails = document.getElementById('detailsTxt').textContent
-    var txtTopic = document.getElementById('topicTxt').textContent
     var txtComments = document.getElementById('commentsTxt').textContent
     $(document).ready(function (){
-
-        $("#switchDark").change(function (){
-           $("body").toggleClass("bg-secondary");
-           $(".section,.rd-navbar-main-outer").toggleClass("dark-mode");
-           $("nav").toggleClass("nav-dark-mode");
-           $(".custom-control-label").toggleClass("text-white");
-           $("h1, h2, p, div,.rd-nav-item,.rd-nav-link,.lang").toggleClass("text-white");
-       });
-
         $.ajax({
             url: "/get_items",
             type: "POST",
             data: '',
             success: function (response){
-                // console.log("response: " + JSON.stringify(response));
-                var rowTxt = ''
-                for (var i=0;i<response.length; i++){
-                    // rowTxt = '';
-                    var colDiv = '';
-                    var tagDiv = 'Tags: ';
-                    if(response[i].json[0].json.columns != null)
-                        response[i].json[0].json.columns.forEach(function(col){
-                            colDiv +=
-                                col.name + ': <span>' + col.data + '</span><br>';
-                        });
-                    if(response[i].json[0].json.tags != null)
-                        response[i].json[0].json.tags.forEach(function(tag){
-                            tagDiv += '<a href="#"> #<span style="color: #00aced">' + tag.name + '</span> </a>';
-                        });
-                    rowTxt +=
-                        '<div class="testimonial-box">' +
-                        '<div class="testimonial-title">' + response[i].json[0].name + '</div>' +
-                        '<div>' +
-                        '<img src="' + response[i].json[0].image_url + '" ' +
-                        'alt=""/>' +
-                        '</div>' +
-                        '<div class="testimonial-text">' +
-                        '<p class="item-price">' + colDiv + tagDiv +
-                        '<br>' + txtComments + ' :<span style="color: #4de17c"> ' +
-                        '<a href="/item?item_id=' + response[i].json[0].id + '">' + response[i].json[0].comment_count + '</a></span></p>' +
-                        '</div>' +
-                        '<div class="testimonial-name">' + txtCollection + ' : <a href="#">Strategy</a></div>' +
-                        '<div class="star-rating">' +
-                        '<ul class="list-inline">' +
-                        '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                        '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                        '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                        '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                        '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>' +
-                        '</ul>' +
-                        '</div>' +
-                        '<a href="/item?item_id=' + response[i].json[0].id + '" class="btn btn-primary">' + txtDetails + '</a>'+
-                        '</div>';
-                }
-                var divTxt = '<div class="owl-carousel owl-theme-1" data-items="1" data-sm-items="1" data-md-items="1" data-lg-items="1" data-xl-items="2" data-xxl-items="3" data-margin="15px" data-nav="false" data-dots="true">';
-                divTxt += rowTxt + '</div>';
-                $('#myItemCarousel').append(divTxt);
-
+                appendItem(response);
             },
             error: function (error){
                 console.log("error: " + error);
@@ -197,26 +146,4 @@
 </script>
 <script src="/js/core.min.js"></script>
 <script src="/js/script.js"></script>
-<style>
-    .dark-mode{
-        background-color: rgb(11 18 64 / 84%);
-    }
-    .nav-dark-mode{
-        background-color: #252e65;
-    }
-    .ie-panel {
-        display: none;
-        background: #212121;
-        padding: 10px 0;
-        box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, .3);
-        clear: both;
-        text-align: center;
-        position: relative;
-        z-index: 1;
-    }
-
-    html.ie-10 .ie-panel, html.lt-ie-10 .ie-panel {
-        display: block;
-    }
-</style>
 

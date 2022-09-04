@@ -19,6 +19,8 @@
   <script
           nomodule>window.MSInputMethodContext && document.documentMode && document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-ie11@5/css/bootstrap-ie11.min.css">' +
           '<script src="https://cdn.jsdelivr.net/npm/ie11-custom-properties@4/ie11CustomProperties.min.js"><\/script>');</script>
+  <link rel="stylesheet" href="/css/custom.css">
+  <script type="text/javascript" src="/js/custom.js"></script>
 </head>
 <body>
 <div class="ie-panel"><a href="#"><img src="/img/logo.jpg" height="42" width="820"
@@ -189,7 +191,6 @@
       console.log("comments json: " + JSON.stringify(response));
       var rowTxt = ''
       for (var i=0;i<response.length; i++){
-        console.log("imageUrl: " + response[i].user.imageUrl);
         rowTxt +=
                 '<div class="card">' +
                 '<div class="card-body">' +
@@ -224,7 +225,6 @@
     type: "POST",
     data: 'item_id=' + itemId,
     success: function (response){
-      // console.log("response: " + JSON.stringify(response));
       var rowTxt = ''
       for (var i=0;i<response.length; i++){
         // rowTxt = '';
@@ -239,6 +239,12 @@
           response[i].json[0].json.tags.forEach(function(tag){
             tagDiv += '<a href="#"> #<span style="color: #00aced">' + tag.name + '</span> </a>';
           });
+        var starTxt = '';
+        for(var j=1;j<=5;j++){
+          var txt = response[i].json[0].overall_rate >= j ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
+          starTxt +=
+                  '<li class="list-inline-item"><a href="#" onclick="addRate(' + response[i].json[0].id + ',' + j + ')"> ' + txt + '</a></li>';
+        }
         rowTxt +=
                 '<div class="testimonial-box">' +
                 '<div class="testimonial-title">' + response[i].json[0].name + '</div>' +
@@ -253,12 +259,7 @@
                 '</div>' +
                 '<div class="testimonial-name">' + txtCollection + ' : <a href="#">Strategy</a></div>' +
                 '<div class="star-rating">' +
-                '<ul class="list-inline">' +
-                '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                '<li class="list-inline-item"><i class="fa fa-star"></i></li>' +
-                '<li class="list-inline-item"><i class="fa fa-star-o"></i></li>' +
+                '<ul class="list-inline">' + starTxt +
                 '</ul>' +
                 '</div>' +
                 '</div>';
@@ -280,26 +281,5 @@
 </script>
 <script src="/js/core.min.js"></script>
 <script src="/js/script.js"></script>
-<style>
-  .dark-mode{
-    background-color: rgb(11 18 64 / 84%);
-  }
-  .nav-dark-mode{
-    background-color: #252e65;
-  }
-  .ie-panel {
-    display: none;
-    background: #212121;
-    padding: 10px 0;
-    box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, .3);
-    clear: both;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
 
-  html.ie-10 .ie-panel, html.lt-ie-10 .ie-panel {
-    display: block;
-  }
-</style>
 
