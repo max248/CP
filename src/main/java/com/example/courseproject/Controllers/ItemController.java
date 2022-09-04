@@ -69,6 +69,7 @@ public class ItemController {
         String itemId = request.getParameter("item_id") != null? request.getParameter("item_id") : "0";
         request.setAttribute("item_id",itemId);
 
+        request.setAttribute("sign", false);
         if(authentication != null && authentication.isAuthenticated()){
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             if(customUserDetails != null){
