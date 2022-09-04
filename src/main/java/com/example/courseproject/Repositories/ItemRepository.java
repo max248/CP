@@ -30,15 +30,10 @@ public interface ItemRepository extends JpaRepository<Items,Long> {
     @Transactional
     void updateStatusById(Long id, boolean flag);
 
-    @Modifying
-    @Query("update Items i set i.name = ?2, i.updateDate = current_timestamp where i.id = ?1")
-    @Transactional
-    void updateNameById(Long id, String name);
-
     @Query(nativeQuery = true, value = "select CAST(json_agg(tt.*) as text) as json from(\n" +
             "select t.id,json_agg(t.*) as json\n" +
             "from \n" +
-            "(select i.id, i.name, i.image_url," +
+            "(select i.id, i.name, i.image_url,i.collection_id," +
             "(select name from collections where id = i.collection_id) as collection_name," +
             "(select count(*) from comments where item_id = i.id) as comment_count,\n" +
             "(select  COALESCE(round(sum(rate)/COALESCE(count(id),0)),0) as overall_rate from rates where item_id = i.id) as overall_rate,\n" +
@@ -52,13 +47,13 @@ public interface ItemRepository extends JpaRepository<Items,Long> {
             "where it.item_id = i.id)m\n" +
             ")) as json \n" +
             "\n" +
-            "from items i where i.status is true group by i.id order by i.id\n" +
+            "from items i where i.status is and i.create_user_id = ?1 true group by i.id order by i.id\n" +
             ")t group by t.id) tt")
     String getItemJsonDataByUserId(Long userId);
     @Query(nativeQuery = true, value = "select CAST(json_agg(tt.*) as text) as json from(\n" +
             "select t.id,json_agg(t.*) as json\n" +
             "from \n" +
-            "(select i.id, i.name, i.image_url," +
+            "(select i.id, i.name, i.image_url,i.collection_id," +
             "(select name from collections where id = i.collection_id) as collection_name," +
             "(select count(*) from comments where item_id = i.id) as comment_count,\n" +
             "(select  COALESCE(round(sum(rate)/COALESCE(count(id),0)),0) as overall_rate from rates where item_id = i.id) as overall_rate,\n" +
@@ -75,5 +70,46 @@ public interface ItemRepository extends JpaRepository<Items,Long> {
             "from items i where i.status is true and i.id = ?1 group by i.id order by i.id\n" +
             ")t group by t.id) tt")
     String getItemJsonDataByItemId(Long itemId);
+
+    @Query(nativeQuery = true, value = "select CAST(json_agg(tt.*) as text) as json from(\n" +
+            "select t.id,json_agg(t.*) as json\n" +
+            "from \n" +
+            "(select i.id, i.name, i.image_url,i.collection_id," +
+            "(select name from collections where id = i.collection_id) as collection_name," +
+            "(select count(*) from comments where item_id = i.id) as comment_count,\n" +
+            "(select  COALESCE(round(sum(rate)/COALESCE(count(id),0)),0) as overall_rate from rates where item_id = i.id) as overall_rate,\n" +
+            "json_build_object('columns',\n" +
+            "(select json_agg(m.*) from (select cc.name,itd.data from item_data  itd\n" +
+            "left join collection_columns cc on cc.id = itd.collection_column_id\n" +
+            "where itd.item_id = i.id)m), 'tags',(select json_agg(m.*) from \n" +
+            "(select t.name\n" +
+            "from tags  t\n" +
+            "left join item_tags it on it.tag_id = t.id\n" +
+            "where it.item_id = i.id)m\n" +
+            ")) as json \n" +
+            "\n" +
+            "from items i where i.status is true and i.collection_id = ?1 group by i.id order by i.id\n" +
+            ")t group by t.id) tt")
+    String getItemsbyCollectionId(Long collectionId);
+    @Query(nativeQuery = true, value = "select CAST(json_agg(tt.*) as text) as json from(\n" +
+            "select t.id,json_agg(t.*) as json\n" +
+            "from \n" +
+            "(select i.id, i.name, i.image_url,i.collection_id," +
+            "(select name from collections where id = i.collection_id) as collection_name," +
+            "(select count(*) from comments where item_id = i.id) as comment_count,\n" +
+            "(select  COALESCE(round(sum(rate)/COALESCE(count(id),0)),0) as overall_rate from rates where item_id = i.id) as overall_rate,\n" +
+            "json_build_object('columns',\n" +
+            "(select json_agg(m.*) from (select cc.name,itd.data from item_data  itd\n" +
+            "left join collection_columns cc on cc.id = itd.collection_column_id\n" +
+            "where itd.item_id = i.id)m), 'tags',(select json_agg(m.*) from \n" +
+            "(select t.name\n" +
+            "from tags  t\n" +
+            "left join item_tags it on it.tag_id = t.id\n" +
+            "where it.item_id = i.id)m\n" +
+            ")) as json \n" +
+            "\n" +
+            "from items i where i.status is true group by i.id order by i.id\n" +
+            ")t group by t.id) tt")
+    String getAllItems();
 
 }

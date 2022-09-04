@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,6 +56,29 @@ public class CollectionController {
         model.addAttribute("listTopics",listTopics);
         model.addAttribute("listColumnType",listColumnType);
         return "collection_settings";
+    }
+    @GetMapping("/collection")
+    public String viewCollection(Authentication authentication, HttpServletRequest request, HttpServletResponse response){
+        Long collectionId = request.getParameter("collection_id") != null? Long.parseLong(request.getParameter("collection_id")) : 0;
+        request.setAttribute("collection_id",collectionId);
+        Collections collections = collectionRepository.getOne(collectionId);
+
+        request.setAttribute("sign", false);
+        request.setAttribute("collection_name", collections.getName());
+        request.setAttribute("descriptions", collections.getDescriptions());
+        request.setAttribute("author_name", collections.getUser().getFullName());
+        request.setAttribute("image_url", collections.getImageUrl());
+        if(authentication != null && authentication.isAuthenticated()){
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            if(customUserDetails != null){
+                request.setAttribute("role",customUserDetails.getRole().getName());
+                request.setAttribute("sign", true);
+                User user = userRepository.findByEmail(customUserDetails.getUsername());
+                LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+                localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+            }
+        }
+        return "collection";
     }
 
     @PostMapping("/add_collection")
@@ -197,7 +222,7 @@ public class CollectionController {
     }
 
     @PostMapping("/get_collection")
-    public void getItem(Authentication authentication, HttpServletResponse response) throws IOException {
+    public void getCollection(Authentication authentication, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();

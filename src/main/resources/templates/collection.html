@@ -68,7 +68,7 @@
                   </li>
                   <li class="rd-nav-item">
                     <div class="custom-control custom-switch">
-                      <input type="checkbox" class="custom-control-input" id="switchDark">
+                      <input type="checkbox" class="custom-control-input" id="switchDark" onclick="switcher()">
                       <label class="custom-control-label" for="switchDark" th:text="#{dark_mode}"></label>
                     </div>
                   </li>
@@ -84,7 +84,7 @@
                   </li>
                   <li class="rd-nav-item">
                     <div class="custom-control custom-switch">
-                      <input type="checkbox" class="custom-control-input" id="switchDark">
+                      <input type="checkbox" class="custom-control-input" id="switchDark1">
                       <label class="custom-control-label" for="switchDark" th:text="#{dark_mode}"></label>
                     </div>
                   </li>
@@ -97,31 +97,42 @@
     </div>
   </header>
   <div class="section">
-    <label th:text="${item_id}" hidden id="item_id"></label>
+    <label th:text="${collection_id}" hidden id="collection_id"></label>
     <label th:text="#{collection}" hidden id="collectionTxt"></label>
     <label th:text="#{details}" hidden id="detailsTxt"></label>
     <label th:text="#{topic}" hidden id="topicTxt"></label>
     <label th:text="#{comments}" hidden id="commentsTxt"></label>
     <div class="section">
-      <div class="row">
-        <div class="col-md-6" id="myItemCarousel">
-        </div>
-        <div class="col-md-6">
-          <div class="row">
-            <h3 class="title" th:text="#{comments}">Comments</h3>
-            <div class="container" id="myComments" style="overflow-y: scroll; height: 45vh;">
+      <div class="text-center">
+        <h3 class="title" th:text="#{collection}">Collection</h3>
+        <section class="section mt-5">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6">
+                <div>
+                  <img th:alt="${collection_name}" class="img-fluid" style="width: 500px; height: 300px"
+                       th:src="${image_url}" />
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-5 ml-auto d-flex align-items-center mt-4 mt-md-0">
+                <div style="text-align: left;">
+                  <h2 style="text-align: left;" th:text="${collection_name}"></h2>
+                  <h6 style="text-align: left;">
+                    <label th:text="#{author}"></label>:
+                    <label th:text="${author_name}"></label>
+                  </h6>
+                  <label th:text="#{descriptions}"></label>:
+                  <p style="text-align: left; width: 80%;" class="margin-top-s" th:text="${descriptions}"></p>
+                </div>
+              </div>
             </div>
-
           </div>
-          <form class="form" th:if="${sign == true}" style="padding-top: 5px;">
-            <div>
-              <textarea class="form-control" rows="3" placeholder="Your comments" id="contentComment" style="width: 80%"></textarea>
-            </div>
-            <div style="text-align: right; width: 80%; padding-top: 5px;">
-              <button type="button" class="btn btn-success" onclick="addComment()">Add</button>
-            </div>
-          </form>
-        </div>
+        </section>
+      </div>
+    </div>
+    <div class="section" id="myItemCarousel" style="padding-top: 10px;">
+      <div class="text-center">
+        <h3 class="title" th:text="#{items}">Items</h3>
       </div>
     </div>
   </div>
@@ -152,136 +163,36 @@
 </body>
 </html>
 <script>
-  $("#switchDark").change(function (){
-    $("body").toggleClass("bg-secondary");
-    $(".section,.rd-navbar-main-outer, .container, .card").toggleClass("dark-mode");
-    $("nav").toggleClass("nav-dark-mode");
-    $(".custom-control-label").toggleClass("text-white");
-    $("h1, h2, h3, p, div,.rd-nav-item,.rd-nav-link,.lang, .a, .strong").toggleClass("text-white");
-  });
 
-  var itemId = document.getElementById('item_id').textContent;
+  var collectionId = document.getElementById('collection_id').textContent;
   var txtCollection = document.getElementById('collectionTxt').textContent;
   var txtDetails = document.getElementById('detailsTxt').textContent;
   var txtTopic = document.getElementById('topicTxt').textContent;
   var txtComments = document.getElementById('commentsTxt').textContent;
 
-  function addComment(){
-    var contentComment = document.getElementById('contentComment').value;
-    console.log("content: " + contentComment);
+
+  $(document).ready(function (){
     $.ajax({
-      url: "/add_comment",
+      url: "/get_items",
       type: "POST",
-      data: 'item_id=' + itemId + '&content=' + contentComment,
+      data: 'collection_id=' + collectionId,
       success: function (response){
-        if(response == 'success'){
-          window.location.href = "item?item_id=" + itemId;
-        }
+        appendItem(response);
       },
       error: function (error){
         console.log("error: " + error);
       }
     });
-  }
-  $.ajax({
-    url: "/get_comments",
-    type: "POST",
-    data: 'item_id=' + itemId,
-    success: function (response){
-      console.log("comments json: " + JSON.stringify(response));
-      var rowTxt = ''
-      for (var i=0;i<response.length; i++){
-        rowTxt +=
-                '<div class="card">' +
-                '<div class="card-body">' +
-                '<div class="row">' +
-                '<div class="col-md-2">' +
-                '<img src="' + response[i].user.imageUrl + '" class="img img-rounded img-fluid"/>' +
-                '</div>' +
-                '<div class="col-md-10">' +
-                '<p>' +
-                '<a class="float-left" href="#">' +
-                '<strong>' + response[i].user.firstName + ' ' + response[i].user.lastName + '</strong></a>&ensp;'
-                + response[i].createDate +
-                '</p>' +
-                '<div class="clearfix"></div>' +
-                '<p>' + response[i].content +
-                '</p>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
-      }
-      console.log("rowTxt: " + rowTxt);
-      $('#myComments').append(rowTxt);
-    },
-    error: function (error){
-      console.log("error: " + error);
-    }
-  });
 
-    $.ajax({
-    url: "/get_item_id",
-    type: "POST",
-    data: 'item_id=' + itemId,
-    success: function (response){
-      var rowTxt = ''
-      for (var i=0;i<response.length; i++){
-        // rowTxt = '';
-        var colDiv = '';
-        var tagDiv = 'Tags: ';
-        if(response[i].json[0].json.columns != null)
-          response[i].json[0].json.columns.forEach(function(col){
-            colDiv +=
-                    col.name + ': <span>' + col.data + '</span><br>';
-          });
-        if(response[i].json[0].json.tags != null)
-          response[i].json[0].json.tags.forEach(function(tag){
-            tagDiv += '<a href="#"> #<span style="color: #00aced">' + tag.name + '</span> </a>';
-          });
-        var starTxt = '';
-        for(var j=1;j<=5;j++){
-          var txt = response[i].json[0].overall_rate >= j ? '<i class="fa fa-star"></i>' : '<i class="fa fa-star-o"></i>';
-          starTxt +=
-                  '<li class="list-inline-item"><a href="#" onclick="addRate(' + response[i].json[0].id + ',' + j + ')"> ' + txt + '</a></li>';
-        }
-        rowTxt +=
-                '<div class="testimonial-box">' +
-                '<div class="testimonial-title">' + response[i].json[0].name + '</div>' +
-                '<div>' +
-                '<img src="' + response[i].json[0].image_url + '" ' +
-                'alt=""/>' +
-                '</div>' +
-                '<div class="testimonial-text">' +
-                '<p class="item-price">' + colDiv + tagDiv +
-                '<br>' + txtComments + ' :<span style="color: #4de17c"> ' +
-                '<a href="/item?item_id=' + response[i].json[0].id + '">' + response[i].json[0].comment_count + '</a></span></p>' +
-                '</div>' +
-                '<div class="testimonial-name">' + txtCollection +
-                ' : <a href="/collection?collection_id=' +
-                response[i].json[0].collection_id + '">' + response[i].json[0].collection_name +  '</a></div>' +
-                '<div class="star-rating">' +
-                '<ul class="list-inline">' + starTxt +
-                '</ul>' +
-                '</div>' +
-                '</div>';
-      }
-      var divTxt = '<div class="owl-theme-1" data-items="1" data-sm-items="1" data-md-items="1" data-lg-items="1" data-xl-items="2" data-xxl-items="3" data-margin="15px" data-nav="false" data-dots="true">';
-      divTxt += rowTxt + '</div>';
-      $('#myItemCarousel').append(divTxt);
-    },
-    error: function (error){
-      console.log("error: " + error);
-    }
+    var tagString = '<script async type=\"text/javascript\" src=\"/js/script.js\"><\/script>';
+    var range = document.createRange();
+    range.selectNode(document.getElementsByTagName("BODY")[0]);
+    var documentFragment = range.createContextualFragment(tagString);
+    document.body.appendChild(documentFragment);
   });
-
-  var tagString = '<script async type=\"text/javascript\" src=\"/js/script.js\"><\/script>';
-  var range = document.createRange();
-  range.selectNode(document.getElementsByTagName("BODY")[0]);
-  var documentFragment = range.createContextualFragment(tagString);
-  document.body.appendChild(documentFragment);
 </script>
 <script src="/js/core.min.js"></script>
 <script src="/js/script.js"></script>
+
 
 

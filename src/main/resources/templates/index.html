@@ -68,7 +68,7 @@
                                     </li>
                                     <li class="rd-nav-item">
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" class="custom-control-input" id="switchDark">
+                                            <input type="checkbox" class="custom-control-input" id="switchDark" onclick="switcher()">
                                             <label class="custom-control-label" for="switchDark" th:text="#{dark_mode}"></label>
                                         </div>
                                     </li>
@@ -130,6 +130,7 @@
             type: "POST",
             data: '',
             success: function (response){
+                console.log("length: " + response.length);
                 appendItem(response);
             },
             error: function (error){
@@ -146,4 +147,3 @@
 </script>
 <script src="/js/core.min.js"></script>
 <script src="/js/script.js"></script>
-

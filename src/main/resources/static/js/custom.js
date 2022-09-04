@@ -20,13 +20,13 @@ $(document).ready(function () {
 // var ps = new PerfectScrollbar('#sidebar');
 
 
-$("#switchDark").change(function (){
+function switcher(){
   $("body").toggleClass("bg-secondary");
-  $(".section,.rd-navbar-main-outer").toggleClass("dark-mode");
+  $(".section,.rd-navbar-main-outer, .container, .row").toggleClass("dark-mode");
   $("nav").toggleClass("nav-dark-mode");
   $(".custom-control-label").toggleClass("text-white");
-  $("h1, h2, p, div,.rd-nav-item,.rd-nav-link,.lang").toggleClass("text-white");
-});
+  $("h1, h2,h6,h3, p, div,.rd-nav-item,.rd-nav-link,.lang").toggleClass("text-white");
+}
 
 function appendItem(response){
   var rowTxt = ''
@@ -60,7 +60,8 @@ function appendItem(response){
         '<br>' + txtComments + ' :<span style="color: #4de17c"> ' +
         '<a href="/item?item_id=' + response[i].json[0].id + '">' + response[i].json[0].comment_count + '</a></span></p>' +
         '</div>' +
-        '<div class="testimonial-name">' + txtCollection + ' : <a href="#">Strategy</a></div>' +
+        '<div class="testimonial-name">' + txtCollection +
+        ' : <a href="/collection?collection_id=' + response[i].json[0].collection_id + '">' + response[i].json[0].collection_name + '</a></div>' +
         '<div class="star-rating">' +
         '<ul class="list-inline">' + starTxt +
         '</ul>' +
@@ -70,7 +71,6 @@ function appendItem(response){
   }
   var divTxt = '<div class="owl-carousel owl-theme-1" data-items="1" data-sm-items="1" data-md-items="1" data-lg-items="1" data-xl-items="2" data-xxl-items="3" data-margin="15px" data-nav="false" data-dots="true">';
   divTxt += rowTxt + '</div>';
-  console.log("divTxt: " + divTxt);
   $('#myItemCarousel').append(divTxt);
 }
 

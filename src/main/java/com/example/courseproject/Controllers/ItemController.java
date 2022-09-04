@@ -244,17 +244,20 @@ public class ItemController {
         }
     }
     @PostMapping("/get_items")
-    public void getItem(Authentication authentication, HttpServletResponse response) throws IOException {
+    public void getItem(Authentication authentication, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        if(authentication != null && authentication.isAuthenticated()){
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            String projectionList = itemRepository.getItemJsonDataByUserId(customUserDetails.getUserId());
-            response.getWriter().write(projectionList);
+        Long collectionId = request.getParameter("collection_id") != null ? Long.parseLong(request.getParameter("collection_id")) : 0;
+        Long userId = request.getParameter("user_id") != null ? Long.parseLong(request.getParameter("user_id")) : 0;
+        String jsonList;
+        if(collectionId > 0){
+            jsonList = itemRepository.getItemsbyCollectionId(collectionId);
+        } else if(userId > 0){
+            jsonList = itemRepository.getItemJsonDataByUserId(userId);
         } else {
-            String projectionList = itemRepository.getItemJsonDataByUserId(null);
-            response.getWriter().write(projectionList);
+            jsonList = itemRepository.getAllItems();
         }
+        response.getWriter().write(jsonList);
     }
 
     @PostMapping("/get_item_id")
