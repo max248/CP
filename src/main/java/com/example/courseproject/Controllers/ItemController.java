@@ -57,7 +57,7 @@ public class ItemController {
         }
         User user = userRepository.getUserByEmail(customUserDetails.getUsername());
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+        localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
         request.setAttribute("username",customUserDetails.getFullName());
         List<Items> itemsList = itemRepository.findAll();
         List<Collections> collectionsList = collectionRepository.findAll();
@@ -81,7 +81,7 @@ public class ItemController {
                 request.setAttribute("sign", true);
                 User user = userRepository.findByEmail(customUserDetails.getUsername());
                 LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-                localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+                localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
             }
         }
         return "item";

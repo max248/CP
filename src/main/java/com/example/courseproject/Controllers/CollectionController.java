@@ -58,7 +58,7 @@ public class CollectionController {
         model.addAttribute("listColumnType",listColumnType);
         request.setAttribute("role",customUserDetails.getRole().getName());
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+        localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
         return "collection_settings";
     }
     @GetMapping("/collection")
@@ -79,7 +79,7 @@ public class CollectionController {
                 request.setAttribute("sign", true);
                 User user = userRepository.findByEmail(customUserDetails.getUsername());
                 LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-                localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+                localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
             }
         }
         return "collection";

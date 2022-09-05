@@ -3,6 +3,7 @@ package com.example.courseproject.Controllers;
 import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.TagRepository;
 import com.example.courseproject.Repositories.UserRepository;
+import com.example.courseproject.model.Language;
 import com.example.courseproject.model.Tags;
 import com.example.courseproject.model.Topics;
 import com.example.courseproject.model.User;
@@ -40,7 +41,7 @@ public class TagController {
         }
         User user = userRepository.getUserByEmail(customUserDetails.getUsername());
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+        localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
         request.setAttribute("username",customUserDetails.getFullName());
         List<Tags> tagsList = tagRepository.findAllOrderById();
         model.addAttribute("tagsList",tagsList);

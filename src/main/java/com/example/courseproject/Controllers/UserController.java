@@ -54,7 +54,7 @@ public class UserController {
             request.setAttribute("lang",user.getLanguage().toString());
             request.setAttribute("role",customUserDetails.getRole().getName());
             LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-            localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+            localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
 
             return "user_profil";
         }
@@ -78,7 +78,7 @@ public class UserController {
             List<User> userList = userRepository.findAll();
             User user = userRepository.getUserByEmail(customUserDetails.getUsername());
             LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-            localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+            localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
             model.addAttribute("listUser",userList);
             return "users";
         } else {

@@ -4,6 +4,7 @@ import com.example.courseproject.Services.CustomUserDetails;
 import com.example.courseproject.Repositories.TopicRepository;
 import com.example.courseproject.Repositories.UserRepository;
 import com.example.courseproject.Services.FileService;
+import com.example.courseproject.model.Language;
 import com.example.courseproject.model.Topics;
 import com.example.courseproject.model.User;
 import com.google.gson.Gson;
@@ -45,7 +46,7 @@ public class TopicController {
         }
         User user = userRepository.getUserByEmail(customUserDetails.getUsername());
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response,new Locale(user.getLanguage().toString()));
+        localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
         request.setAttribute("username",customUserDetails.getFullName());
         List<Topics> topicsList = topicRepository.findAllOrderById();
         model.addAttribute("listTopics",topicsList);
