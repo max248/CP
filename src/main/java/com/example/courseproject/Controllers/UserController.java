@@ -48,7 +48,6 @@ public class UserController {
                 authentication.setAuthenticated(false);
                 return "login";
             }
-
             User user = userRepository.getUserByEmail(customUserDetails.getUsername());
             request.setAttribute("username",customUserDetails.getFullName());
             request.setAttribute("user",user);
