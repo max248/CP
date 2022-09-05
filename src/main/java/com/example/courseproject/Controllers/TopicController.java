@@ -46,7 +46,7 @@ public class TopicController {
         }
         User user = userRepository.getUserByEmail(customUserDetails.getUsername());
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
+        localeResolver.setLocale(request, response,new Locale((user != null && user.getLanguage() != null) ? user.getLanguage().toString() : String.valueOf(Language.en)));
         request.setAttribute("username",customUserDetails.getFullName());
         List<Topics> topicsList = topicRepository.findAllOrderById();
         model.addAttribute("listTopics",topicsList);

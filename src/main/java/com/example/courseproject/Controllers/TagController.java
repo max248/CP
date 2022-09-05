@@ -41,7 +41,7 @@ public class TagController {
         }
         User user = userRepository.getUserByEmail(customUserDetails.getUsername());
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response,new Locale(user != null ? user.getLanguage().toString() : String.valueOf(Language.en)));
+        localeResolver.setLocale(request, response,new Locale((user != null && user.getLanguage() != null) ? user.getLanguage().toString() : String.valueOf(Language.en)));
         request.setAttribute("username",customUserDetails.getFullName());
         List<Tags> tagsList = tagRepository.findAllOrderById();
         model.addAttribute("tagsList",tagsList);

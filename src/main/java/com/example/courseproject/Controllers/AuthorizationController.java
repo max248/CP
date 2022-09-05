@@ -135,6 +135,7 @@ public class AuthorizationController {
                     user.setRegDate(date);
                     user.setLastLoginDate(date);
                     user.setProvider(Provider.GOOGLE);
+                    user.setLanguage(Language.en);
                     Role role = new Role();
                     role = roleRepository.findByRoleName("USER");
                     user.setRole(role);
