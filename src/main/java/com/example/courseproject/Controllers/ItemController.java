@@ -261,7 +261,7 @@ public class ItemController {
         } else {
             jsonList = itemRepository.getAllItems();
         }
-        response.getWriter().write(jsonList);
+        response.getWriter().write(jsonList != null ? jsonList : "");
     }
 
     @PostMapping("/get_item_id")

@@ -107,6 +107,7 @@ public class CollectionController {
                 collections.setName(collectionName);
                 collections.setCreateDate(new Date());
                 collections.setImageUrl(fileService.getFilePath(imageFile));
+                collections.setStatus(true);
                 if(collectionRepository.findByName(collectionName) != null && collectionRepository.findByName(collectionName).getId()>0){
                     response.setContentType("text/html");
                     response.setCharacterEncoding("UTF-8");

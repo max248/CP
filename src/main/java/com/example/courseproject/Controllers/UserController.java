@@ -285,6 +285,11 @@ public class UserController {
         user.setLastLoginDate(date);
         Role role = new Role();
         role = roleRepository.findByRoleName("USER");
+        if(role == null){
+            role = new Role();
+            role.setName("USER");
+            role = roleRepository.save(role);
+        }
         user.setRole(role);
         user.setProvider(Provider.LOCAL);
         user.setLanguage(Language.en);

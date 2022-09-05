@@ -56,7 +56,7 @@
             <div class="col-md-12">
               <div class="page_title">
                 <div class="row">
-                  <div class="col-md-10">
+                  <div class="col-md-2">
                     <h2>Items</h2>Settings
                   </div>
                   <div class="col-md-2">
@@ -252,11 +252,21 @@
         var wrapper = $(".input_fields_wrap");
         clearDiv();
         for(var i=0;i<response.length;i++){
-          $(wrapper).append('' +
+          console.log("type: " + response[i].columnType.type);
+          var inputTxt = '<input type="' + response[i].columnType.type + '" name="collectionColumn" id="collectionColumn" class="form-control collectionColumn">';
+          if(new String(response[i].columnType.type).valueOf() == new String("Text Area").valueOf()){
+            inputTxt = '<textarea name="collectionColumn" id="collectionColumn" class="form-control collectionColumn"></textarea>'
+          }
+          if(new String(response[i].columnType.type).valueOf() == new String("checkbox").valueOf()){
+            inputTxt = '<input type="checkbox" name="collectionColumn" value="0" checked="no">    '
+          }
+
+                  $(wrapper).append('' +
                   '<div class="col-4">' +
-                  '<label class="form-label" for="columnName" name="collectionColumnName" id="collectionColumnName">' + response[i].name + '</label>' +
-                  '<input type="number" name="collectionColumnId" hidden value="' + response[i].id + '">' +
-                  '<input type="' + response[i].columnType.type + '" name="collectionColumn" id="collectionColumn" class="form-control collectionColumn">' +
+                  '<label class="form-label" for="columnName" name="collectionColumnName" id="collectionColumnName">' +
+                  response[i].name + '</label>' +
+                  '<input type="number" name="collectionColumnId" hidden value="' + response[i].id + '">' + inputTxt
+                   +
                   '</div>');
 
         }
