@@ -3,6 +3,7 @@ package com.example.courseproject.Controllers;
 import com.example.courseproject.Repositories.RoleRepository;
 import com.example.courseproject.Repositories.UserRepository;
 import com.example.courseproject.Services.CustomUserDetails;
+import com.example.courseproject.Services.FileService;
 import com.example.courseproject.model.*;
 import com.google.gson.Gson;
 import org.apache.commons.text.RandomStringGenerator;
@@ -36,6 +37,9 @@ public class AuthorizationController {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private FileService fileService;
+
     @GetMapping("/oauth2")
     public RedirectView loginPage(HttpServletRequest request) throws IOException, NoSuchAlgorithmException, KeyManagementException {
         System.setProperty("com.sun.security.enableAIAcaIssuers", "true");
@@ -136,6 +140,7 @@ public class AuthorizationController {
                     user.setLastLoginDate(date);
                     user.setProvider(Provider.GOOGLE);
                     user.setLanguage(Language.en);
+                    user.setImageUrl(fileService.getFilePath(null));
                     Role role = new Role();
                     role = roleRepository.findByRoleName("USER");
                     user.setRole(role);
