@@ -21,7 +21,7 @@ public class FileService {
     }
 
     public String getFilePath(MultipartFile file) throws IOException {
-        if (file != null) return uploadFile(file);
+        if (file != null && !file.isEmpty()) return uploadFile(file);
         else return Constants.DEFAULT_COLLECTION_IMG_URL;
     }
 }
